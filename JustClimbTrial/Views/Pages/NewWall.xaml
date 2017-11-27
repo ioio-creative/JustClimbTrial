@@ -1,0 +1,62 @@
+﻿<Page x:Class="JustClimbTrial.Views.Pages.NewWall"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:JustClimbTrial.Views.Pages"
+      xmlns:viewModel="clr-namespace:JustClimbTrial.ViewModels"
+      xmlns:userControl="clr-namespace:JustClimbTrial.Views.UserControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="360" d:DesignWidth="640"
+    Title="NewWall"
+    Loaded="NewWall_Loaded"
+    Unloaded="NewWall_Unloaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="6*" />
+        </Grid.RowDefinitions>
+
+        <!-- row 0 -->
+        <userControl:HeaderRowNavigation 
+            x:Name="navHead"
+            Grid.Row="0"
+            HeaderRowTitle="Boulder - Route Select" />
+        <!-- end of row 0 -->
+        
+        <!-- row 1 -->
+        <!-- grid 1 -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <Viewbox Name="viewBox" Grid.Column="0">
+                <Grid>
+                    <Image Name="cameraIMG" />
+                    <Canvas x:Name="canvas" Background="Transparent" MouseDown="Canvas_MouseDown" Width="{Binding ActualWidth, ElementName=cameraIMG, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=cameraIMG, Mode=OneWay}">
+                    </Canvas>
+                </Grid>
+            </Viewbox>
+
+            <StackPanel Grid.Column="1">
+                <Button Name="newWallBtn" Content="Snapshot Wall" 
+                        FontSize="10"  Height="50" Margin="50 10 50 10" 
+                        Click="SnapshotWallBtn_Clicked"  />
+                <DockPanel Margin="15 5 15 0">
+                    <TextBlock x:Name="sliderLabel" Text="Boulder Size" DockPanel.Dock="Left"></TextBlock>
+                    <TextBlock Text="{Binding ElementName=radiusSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
+                               DockPanel.Dock="Right" TextAlignment="Right" RenderTransformOrigin="2.157,0.156" />
+                </DockPanel>
+                <Slider x:Name="radiusSlider" Value="50" Margin="20 10 20 10" Minimum="0" Maximum="100" TickPlacement="BottomRight" TickFrequency="5" IsSnapToTickEnabled="True" 
+                        ValueChanged="RadiusSlider_ValueChanged" />
+                <Button Name="saveWallBtn" Content="Save Wall" FontSize="10"  Height="50" Margin="50 10 50 10" Click="SaveWallBtn_Click" />
+                
+
+            </StackPanel>
+                        
+        </Grid>
+        <!-- end of grid 1 -->
+        <!-- end of row 1 -->
+    </Grid>
+</Page>
