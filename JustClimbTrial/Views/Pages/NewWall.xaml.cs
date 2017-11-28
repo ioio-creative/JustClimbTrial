@@ -1,19 +1,14 @@
-﻿using JustClimbTrial.Kinect;
+﻿using JustClimbTrial.Helpers;
+using JustClimbTrial.Kinect;
+using JustClimbTrial.ViewModels;
 using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace JustClimbTrial.Views.Pages
 {
@@ -30,7 +25,7 @@ namespace JustClimbTrial.Views.Pages
         KinectSensor kinectSensor;
         MultiSourceFrameReader mulSourceReader;
 
-        CoordinateMapper coMapper;
+        //CoordinateMapper coMapper;
 
         float colorWidth, colorHeight, depthWidth, depthHeight;
 
@@ -61,12 +56,14 @@ namespace JustClimbTrial.Views.Pages
         /// </summary>
         private readonly int bytesPerPixel = (PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
 
-        IList<Body> _bodies;
+        private IList<Body> _bodies;
 
-        bool _displayBody = false;
+        private bool _displayBody = false;
         //bool _mirror = false;
 
-        Wall jcWall;
+        private Wall jcWall;
+
+        private RocksOnWallViewModel rocksOnWallViewModel;
 
         #endregion
         
@@ -80,12 +77,10 @@ namespace JustClimbTrial.Views.Pages
             if (kinectSensor != null)
             {
                 kinectSensor.Open();
-                System.Console.WriteLine("Kinect Activated");
+                Console.WriteLine("Kinect Activated");
 
                 mulSourceReader = kinectSensor.OpenMultiSourceFrameReader(FrameSourceTypes.Color | FrameSourceTypes.Depth | FrameSourceTypes.Infrared | FrameSourceTypes.Body);
                 mulSourceReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
-
-                coMapper = kinectSensor.CoordinateMapper;
 
                 colorWidth = KinectExtensions.frameDimensions[SpaceMode.Color].Item1;
                 colorHeight = KinectExtensions.frameDimensions[SpaceMode.Color].Item2;
@@ -100,10 +95,11 @@ namespace JustClimbTrial.Views.Pages
 
                 // Calculate the WriteableBitmap back buffer size
                 bitmapBackBufferSize = (uint)((bitmap.BackBufferStride * (bitmap.PixelHeight - 1)) + (bitmap.PixelWidth * bytesPerPixel));
-
             }
 
             InitializeComponent();
+
+            navHead.ParentPage = this;
         }
 
 
@@ -112,8 +108,8 @@ namespace JustClimbTrial.Views.Pages
         public void NewWall_Loaded(object sender, RoutedEventArgs e)
         {
             kinectSensor.Open();
-            jcWall = new Wall();
-
+            jcWall = new Wall(canvas, kinectSensor.CoordinateMapper);
+            rocksOnWallViewModel = new RocksOnWallViewModel(canvas);
         }
 
         private void NewWall_Unloaded(object sender, EventArgs e)
@@ -134,14 +130,14 @@ namespace JustClimbTrial.Views.Pages
 
         private void SaveWallBtn_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(jcWall.SelectedBoulder.BoulderShape.Width.ToString());
+            //UiHelper.NotifyUser(jcWall.SelectedBoulder.BoulderShape.Width.ToString());
         }
 
         private void RadiusSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (radiusSlider.Value == 0)
             {
-                MessageBox.Show("Zero radius is not allowed.");
+                UiHelper.NotifyUser("Zero radius is not allowed.");
                 radiusSlider.Value = radiusSlider.Minimum + radiusSlider.TickFrequency;
             }            
         }
@@ -151,21 +147,34 @@ namespace JustClimbTrial.Views.Pages
             Point mouseClickPt = e.GetPosition(cameraIMG);
             //ColorSpacePoint _boulderCSP = new ColorSpacePoint { X = (float)mouseClickPt.X, Y = (float)mouseClickPt.Y };
 
-            bool isAddBoulderSuccess = jcWall.AddBoulder(mouseClickPt.X, mouseClickPt.Y, radiusSlider.Value, canvas.ActualWidth, canvas.ActualHeight, _mode, coMapper);
-            if (isAddBoulderSuccess)
+            Boulder rockCorrespondsToCanvasPt =
+                rocksOnWallViewModel.GetRockInListByCanvasPoint(mouseClickPt);
+
+            if (rockCorrespondsToCanvasPt == null)  // new rock
             {
-                jcWall.SelectedBoulder = jcWall.boulderList.Last();
-                jcWall.SelectedBoulder.DrawBoulder(canvas, coMapper);
+                CameraSpacePoint csp = jcWall.GetCamSpacePointFromMousePoint(mouseClickPt, _mode);
+                rocksOnWallViewModel.AddRock(csp, mouseClickPt, radiusSlider.Value,
+                    radiusSlider.Value);
             }
-            else
-            {                
-                MessageBox.Show("Please take snap shot first.");
+            else  // rock already in list
+            {
+                rocksOnWallViewModel.SelectedRock = rockCorrespondsToCanvasPt;
             }
+
+            //bool isAddBoulderSuccess = jcWall.AddBoulder(mouseClickPt.X, mouseClickPt.Y, radiusSlider.Value, canvas.ActualWidth, canvas.ActualHeight, _mode, coMapper, canvas);
+            //if (isAddBoulderSuccess)
+            //{
+            //    jcWall.SelectedBoulder = jcWall.boulderList.Last();
+            //    jcWall.SelectedBoulder.DrawBoulder();
+            //}
+            //else
+            //{                
+            //    UiHelper.NotifyUser("Please take snap shot first.");
+            //}
         }
 
         private void SnapshotWallBtn_Clicked(object sender, RoutedEventArgs e)
-        {
-            jcWall.ResetWall();
+        {          
             jcWall.SnapShotWallData(colorMappedToDepthSpace, lastNotNullDepthData, lastNotNullColorData);
         }
 
@@ -173,7 +182,10 @@ namespace JustClimbTrial.Views.Pages
         {
             var mSourceFrame = e.FrameReference.AcquireFrame();
             // If the Frame has expired by the time we process this event, return.
-            if (mSourceFrame == null) return;
+            if (mSourceFrame == null)
+            {
+                return;
+            }
 
             DepthFrame depthFrame = null;
             ColorFrame colorFrame = mSourceFrame.ColorFrameReference.AcquireFrame();
@@ -185,23 +197,19 @@ namespace JustClimbTrial.Views.Pages
                     cameraIMG.Source = KinectExtensions.ToBitmap(colorFrame);
                     colorFrame.CopyConvertedFrameDataToArray(lastNotNullColorData, ColorImageFormat.Bgra);
                 }
-
-
-
+                
                 try
                 {
                     depthFrame = mSourceFrame.DepthFrameReference.AcquireFrame();
                     if (depthFrame != null)
-                    {
-
-
+                    {                        
                         // Access the depth frame data directly via LockImageBuffer to avoid making a copy
                         using (KinectBuffer depthFrameData = depthFrame.LockImageBuffer())
                         {
-                            coMapper.MapColorFrameToDepthSpaceUsingIntPtr(
-                                                 depthFrameData.UnderlyingBuffer,
-                                                 depthFrameData.Size,
-                                                 colorMappedToDepthSpace);
+                            kinectSensor.CoordinateMapper.MapColorFrameToDepthSpaceUsingIntPtr(
+                                depthFrameData.UnderlyingBuffer,
+                                depthFrameData.Size,
+                                colorMappedToDepthSpace);
 
                             depthFrame.CopyFrameDataToArray(lastNotNullDepthData);
                         }
@@ -227,17 +235,5 @@ namespace JustClimbTrial.Views.Pages
         }
 
         #endregion
-
-
-        //private Boulder GetSelectedBoulder()
-        //{
-        //    Boulder selectedBoulder = null;
-
-        //    foreach (Boulder boulder in jcWall.boulderList)
-        //    {               
-        //        Point boulderPoint = boulder.MapCameraPointToCanvas(canvas, coMapper);
-
-        //    }
-        //}
     }
 }

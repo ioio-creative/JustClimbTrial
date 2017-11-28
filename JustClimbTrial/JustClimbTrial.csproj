@@ -96,12 +96,14 @@
     <Compile Include="DataAccess\Entities\TrainingRouteVideoDataAccess.cs" />
     <Compile Include="Enums\RockOnBoulderStatus.cs" />
     <Compile Include="Enums\ClimbMode.cs" />
+    <Compile Include="Extensions\CanvasExtension.cs" />
     <Compile Include="Extensions\EllipseExtension.cs" />
     <Compile Include="Extensions\RockExtension.cs" />
     <Compile Include="Globals\AppGlobal.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
-    <Compile Include="Kinect\Boulder.cs" />
+    <Compile Include="Helpers\UiHelper.cs" />
+    <Compile Include="ViewModels\Boulder.cs" />
     <Compile Include="Kinect\KinectExtensions.cs" />
     <Compile Include="Kinect\SpacePointBase.cs" />
     <Compile Include="Kinect\Wall.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Mvvm\UI\FilteringDataGrid.cs" />
     <Compile Include="ViewModels\GameStartViewModel.cs" />
     <Compile Include="ViewModels\RockOnRouteViewModel.cs" />
+    <Compile Include="ViewModels\RocksOnWallViewModel.cs" />
     <Compile Include="ViewModels\RouteSetViewModel.cs" />
     <Compile Include="ViewModels\RoutesViewModel.cs" />
     <Compile Include="ViewModels\RouteVideoViewModel.cs" />

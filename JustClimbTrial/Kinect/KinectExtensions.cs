@@ -106,7 +106,10 @@ namespace JustClimbTrial.Kinect
 
             // 2) Map the real-world coordinates to screen pixels.
             joint = joint.ScaleTo(canvas.ActualWidth, canvas.ActualHeight);
-            if (joint.JointType == 0) System.Console.WriteLine($"Head Position in Camera Space = {joint.Position.X}, {joint.Position.Y}");
+            if (joint.JointType == 0)
+            {
+                Console.WriteLine($"Head Position in Camera Space = {joint.Position.X}, {joint.Position.Y}");
+            }
 
             // 3) Create a WPF ellipse.
             Ellipse ellipse = new Ellipse
@@ -223,11 +226,11 @@ namespace JustClimbTrial.Kinect
             #region Joint Mapping Messages
             if (spPt.X == float.NegativeInfinity || spPt.Y == float.NegativeInfinity)
             {
-                //System.Console.WriteLine($"Joint Mapping Error: Joint[{joint.JointType.ToString()}] ( {spPt.X} , {spPt.Y} )");
+                //Console.WriteLine($"Joint Mapping Error: Joint[{joint.JointType.ToString()}] ( {spPt.X} , {spPt.Y} )");
             }
             else if ((spPt.X < 0 || spPt.Y < 0 || spPt.X > frameDimensions[mode].Item1 || spPt.Y > frameDimensions[mode].Item2))
             {
-                //System.Console.WriteLine($"Joint Mapping Overflow: Joint[{joint.JointType.ToString()}] ( {spPt.X} , {spPt.Y} )");
+                //Console.WriteLine($"Joint Mapping Overflow: Joint[{joint.JointType.ToString()}] ( {spPt.X} , {spPt.Y} )");
             } 
             #endregion
 
@@ -238,7 +241,7 @@ namespace JustClimbTrial.Kinect
 
                 // 2) Scale the mapped coordinates to window dimensions.
                 spPt = spPt.ScaleTo(canvas.ActualWidth, canvas.ActualHeight, mode);
-                //if (joint.JointType == 0) System.Console.WriteLine($"Head Position in Color Space = {spPt.X}, {spPt.Y}");
+                //if (joint.JointType == 0) Console.WriteLine($"Head Position in Color Space = {spPt.X}, {spPt.Y}");
 
                 // 3) Draw the point on Canvas
                 spPt.DrawPoint(canvas); 
@@ -411,9 +414,9 @@ namespace JustClimbTrial.Kinect
             if (reliable)
             {
                 //minDepth = frame.DepthMinReliableDistance;
-                minDepth = (ushort)2000;//frame.DepthMinReliableDistance;
-                maxDepth = (ushort)5000;//frame.DepthMaxReliableDistance;
-                //System.Console.WriteLine($"Use Reliable Depth: {minDepth}.min, {maxDepth}.max");
+                minDepth = 2000;//frame.DepthMinReliableDistance;
+                maxDepth = 5000;//frame.DepthMaxReliableDistance;
+                //Console.WriteLine($"Use Reliable Depth: {minDepth}.min, {maxDepth}.max");
             }
 
             ushort[] depthData = new ushort[width * height];
