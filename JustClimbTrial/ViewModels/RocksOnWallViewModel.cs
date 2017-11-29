@@ -1,7 +1,8 @@
 ﻿using JustClimbTrial.Extensions;
-using JustClimbTrial.Kinect;
 using Microsoft.Kinect;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -55,17 +56,19 @@ namespace JustClimbTrial.ViewModels
 
         public RocksOnWallViewModel(Canvas aCanvas)
         {
-            canvas = aCanvas;
+            canvas = aCanvas;            
         }
 
         #endregion
 
 
+        #region add / remove rock
+
         public Boulder AddRock(CameraSpacePoint camSpacePt, 
             Point canvasPt, double rockWidth, double rockHeight)
         {
             SelectedRock = new Boulder(camSpacePt, canvasPt, rockWidth,
-                    rockHeight, canvas);
+                rockHeight, canvas);
             rocksOnWall.Add(SelectedRock);
             SelectedRock.DrawBoulder();
             return SelectedRock;
@@ -74,7 +77,38 @@ namespace JustClimbTrial.ViewModels
         public void RemoveRock(Point canvasPt)
         {
             Boulder rockToBeRemoved = GetRockInListByCanvasPoint(canvasPt);
-            rocksOnWall.Remove(rockToBeRemoved);
+            RemoveRock(rockToBeRemoved);
+        }
+
+        public void RemoveRock(Boulder rock)
+        {
+            rocksOnWall.Remove(rock);
+            rock.UndrawBoulder();
+        }
+
+        public void RemoveAllRocks()
+        {
+            DeselectRock();
+
+            if (AnyRocksInList())
+            {
+                foreach (Boulder rock in rocksOnWall)
+                {
+                    rock.UndrawBoulder();
+                }
+
+                rocksOnWall.Clear();
+            }
+        }
+
+        #endregion
+
+
+        #region check if rock is in list
+
+        public bool AnyRocksInList()
+        {
+            return rocksOnWall.Any();
         }
 
         public bool IsRockInList(Point canvasPt)
@@ -88,7 +122,7 @@ namespace JustClimbTrial.ViewModels
 
             foreach (Boulder rockOnWall in rocksOnWall)
             {
-                if (rockOnWall.IsCanvasPointCoincide(canvasPt))                
+                if (rockOnWall.IsCoincideWithCanvasPoint(canvasPt))                
                 {
                     requiredBoulder = rockOnWall;
                     break;
@@ -97,11 +131,94 @@ namespace JustClimbTrial.ViewModels
 
             return requiredBoulder;
         }
-        
+
+        public bool IsOverlapWithRocksOnWall(
+            Point ptOnCanvas, double widthOnCanvas,
+            double heightOnCanvas)
+        {
+            return IsOverlapWithRocksOnWallOtherThanSomePredicate(
+                ptOnCanvas, widthOnCanvas,
+                heightOnCanvas, (rock) => false);  // false means skipping no rocks in list during checking for overlap
+        }
+
+        public bool IsOverlapWithRocksOnWallOtherThanSelectedRock(
+            Point ptOnCanvas, double widthOnCanvas,
+            double heightOnCanvas)
+        {
+            return IsOverlapWithRocksOnWallOtherThanSomePredicate(
+                ptOnCanvas, widthOnCanvas,
+                heightOnCanvas, (rock) => rock.Equals(SelectedRock));
+        }
+
+        public bool IsOverlapWithRocksOnWallOtherThanSomePredicate(
+            Point ptOnCanvas, double widthOnCanvas,
+            double heightOnCanvas, Predicate<Boulder> rockToSkipCheckingPredicate)
+        {
+            if (!AnyRocksInList())
+            {
+                return false;
+            }
+
+            bool doOverlapsExist = false;
+            foreach (Boulder rockOnWall in rocksOnWall)
+            {
+                if (rockToSkipCheckingPredicate(rockOnWall))
+                {
+                    continue;
+                }
+
+                if (rockOnWall.IsOverlapWithAnotherBoulder(
+                        ptOnCanvas, widthOnCanvas,
+                        heightOnCanvas))
+                {
+                    doOverlapsExist = true;
+                    break;
+                }
+            }
+            return doOverlapsExist;
+        }        
+
+        #endregion
+
+
+        #region manipulate selected rock
+
+        public void DeselectRock()
+        {
+            if (SelectedRock != null)
+            {
+                SelectedRock = null;  // this causes selectedRockIndicator to be removed from the canvas in the setter 
+            }
+        }
+
+        public void RemoveSelectedRock()
+        {
+            if (SelectedRock != null)
+            {
+                RemoveRock(SelectedRock);
+                DeselectRock();
+            }
+        }
+
+        public void ChangeWidthOfSelectedRock(double newWidth)
+        {
+            if (SelectedRock != null)
+            {
+                SelectedRock.ChangeBWidth(newWidth);
+            }
+        }
+
+        public void ChangeHeightOfSelectedRock(double newHeight)
+        {
+            if (SelectedRock != null)
+            {
+                SelectedRock.ChangeBHeight(newHeight);
+            }
+        }
 
         private static Shape GetNewSelectedRockIndicator()
         {
-            double radius = 2;
+            double radius = 3;
 
             return new Ellipse
             {
@@ -112,5 +229,7 @@ namespace JustClimbTrial.ViewModels
                 Height = radius * 2
             };
         }
+
+        #endregion
     }
 }

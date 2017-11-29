@@ -76,5 +76,21 @@ namespace JustClimbTrial.DataAccess.Entities
                 return ValidWalls.OrderBy(x => x.CreateDT).LastOrDefault();
             }
         }
+
+        public static int LargestWallNo
+        {
+            get
+            {
+                return Walls.Select(x => Convert.ToInt32(x.WallNo)).Max();
+            }
+        }
+
+        public static int LargestValidWallNo
+        {
+            get
+            {
+                return ValidWalls.Select(x => Convert.ToInt32(x.WallNo)).Max();
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
-﻿using JustClimbTrial.Helpers;
+﻿using JustClimbTrial.DataAccess.Entities;
+using JustClimbTrial.Helpers;
 using JustClimbTrial.Kinect;
+using JustClimbTrial.Mvvm.Infrastructure;
 using JustClimbTrial.ViewModels;
 using Microsoft.Kinect;
 using System;
@@ -17,29 +19,36 @@ namespace JustClimbTrial.Views.Pages
     /// </summary>
     public partial class NewWall : Page
     {
+        #region constants
+
+        private const string RockOverlapsWarningMsg = "Please set a smaller rock size to avoid overlaps among rocks!";
+
+        #endregion
+
+
         #region global objects & variables
 
-        SpaceMode _mode = SpaceMode.Color;
+        private SpaceMode _mode = SpaceMode.Color;
 
         // declare Kinect object and frame reader
-        KinectSensor kinectSensor;
-        MultiSourceFrameReader mulSourceReader;
+        private KinectSensor kinectSensor;
+        private MultiSourceFrameReader mulSourceReader;
 
         //CoordinateMapper coMapper;
 
-        float colorWidth, colorHeight, depthWidth, depthHeight;
+        private float colorWidth, colorHeight, depthWidth, depthHeight;
 
         /// <summary>
         /// In NewWall mode, depthFrame must be used;
         /// Intermediate storage for the colorpoints to be mapped to depthframe
         /// </summary>
-        DepthSpacePoint[] colorMappedToDepthSpace;
+        private DepthSpacePoint[] colorMappedToDepthSpace;
 
         /// <summary>
         /// Instantaneous storage of frame data
         /// </summary>
-        ushort[] lastNotNullDepthData;
-        byte[] lastNotNullColorData;
+        private ushort[] lastNotNullDepthData;
+        private byte[] lastNotNullColorData;
 
         /// <summary>
         ///Bitmap to display
@@ -59,14 +68,18 @@ namespace JustClimbTrial.Views.Pages
         private IList<Body> _bodies;
 
         private bool _displayBody = false;
-        //bool _mirror = false;
+        //private bool _mirror = false;
 
-        private Wall jcWall;
+        private KinectWall jcWall;
 
         private RocksOnWallViewModel rocksOnWallViewModel;
 
+        private int newWallNo;
+
+        private bool isSnapShotTaken = false;
+
         #endregion
-        
+
 
         public NewWall()
         {
@@ -99,20 +112,95 @@ namespace JustClimbTrial.Views.Pages
 
             InitializeComponent();
 
+            // set navHead
+            newWallNo = WallDataAccess.LargestWallNo + 1;
+            navHead.HeaderRowTitle = string.Format("Scan KinectWall - {0}", newWallNo);
             navHead.ParentPage = this;
         }
+
+        private void InitialiseCommands()
+        {
+            snapshotWallBtn.Command = new RelayCommand(
+                SnapShotWall, CanSnapShotWall);
+            deselectRockBtn.Command = new RelayCommand(
+                DeselectRock, CanDeselectRock);
+            removeRockBtn.Command = new RelayCommand(
+                RemoveRock, CanRemoveRock);
+            removeAllRocksBtn.Command = new RelayCommand(
+                RemoveAllRocks, CanRemoveAllRocks);            
+            saveWallBtn.Command = new RelayCommand(
+                SaveWall, CanSaveWall);
+        }
+
+
+        #region command methods executed when button clicked
+
+        private bool CanSnapShotWall(object parameter = null)
+        {
+            return true;
+        }
+
+        private bool CanDeselectRock(object parameter = null)
+        {
+            return rocksOnWallViewModel.SelectedRock != null;
+        }
+
+        private bool CanRemoveRock(object parameter = null)
+        {
+            return rocksOnWallViewModel.SelectedRock != null;
+        }
+
+        private bool CanRemoveAllRocks(object parameter = null)
+        {
+            return rocksOnWallViewModel.AnyRocksInList();
+        }
+
+        private bool CanSaveWall(object parameter = null)
+        {
+            return rocksOnWallViewModel.AnyRocksInList();
+        }
+
+        private void SnapShotWall(object parameter = null)
+        {
+            isSnapShotTaken = jcWall.SnapShotWallData(
+                colorMappedToDepthSpace, lastNotNullDepthData, lastNotNullColorData);
+        }
+
+        private void DeselectRock(object parameter = null)
+        {
+            rocksOnWallViewModel.DeselectRock();
+        }
+
+        private void RemoveRock(object parameter = null)
+        {
+            rocksOnWallViewModel.RemoveSelectedRock();
+        }
+
+        private void RemoveAllRocks(object parameter = null)
+        {
+            rocksOnWallViewModel.RemoveAllRocks();
+        }
+
+        private void SaveWall(object parameter = null)
+        {
+            //UiHelper.NotifyUser(jcWall.SelectedBoulder.BoulderShape.Width.ToString());
+        }
+
+        #endregion
 
 
         #region event handlers
 
-        public void NewWall_Loaded(object sender, RoutedEventArgs e)
+        public void Page_Loaded(object sender, RoutedEventArgs e)
         {
             kinectSensor.Open();
-            jcWall = new Wall(canvas, kinectSensor.CoordinateMapper);
+            jcWall = new KinectWall(canvas, kinectSensor.CoordinateMapper);
             rocksOnWallViewModel = new RocksOnWallViewModel(canvas);
+
+            InitialiseCommands();
         }
 
-        private void NewWall_Unloaded(object sender, EventArgs e)
+        private void Page_Unloaded(object sender, EventArgs e)
         {
             if (mulSourceReader != null)
             {
@@ -126,56 +214,98 @@ namespace JustClimbTrial.Views.Pages
                 kinectSensor.Close();
                 kinectSensor = null;
             }
-        }
-
-        private void SaveWallBtn_Click(object sender, RoutedEventArgs e)
+        }        
+       
+        private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            //UiHelper.NotifyUser(jcWall.SelectedBoulder.BoulderShape.Width.ToString());
-        }
-
-        private void RadiusSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (radiusSlider.Value == 0)
+            if (isSnapShotTaken)
             {
-                UiHelper.NotifyUser("Zero radius is not allowed.");
-                radiusSlider.Value = radiusSlider.Minimum + radiusSlider.TickFrequency;
-            }            
-        }
+                Point mouseClickPt = e.GetPosition(cameraIMG);
+                //ColorSpacePoint _boulderCSP = new ColorSpacePoint { X = (float)mouseClickPt.X, Y = (float)mouseClickPt.Y };
 
-        private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Point mouseClickPt = e.GetPosition(cameraIMG);
-            //ColorSpacePoint _boulderCSP = new ColorSpacePoint { X = (float)mouseClickPt.X, Y = (float)mouseClickPt.Y };
+                Boulder rockCorrespondsToCanvasPt =
+                    rocksOnWallViewModel.GetRockInListByCanvasPoint(mouseClickPt);
 
-            Boulder rockCorrespondsToCanvasPt =
-                rocksOnWallViewModel.GetRockInListByCanvasPoint(mouseClickPt);
+                if (rockCorrespondsToCanvasPt == null)  // new rock
+                {
+                    double newBoulderWidthOnCanvas = ConvertSliderValueToSizeOnCanvas(boulderWidthSlider.Value);
+                    double newBoulderHeightOnCanvas = ConvertSliderValueToSizeOnCanvas(boulderHeightSlider.Value);
 
-            if (rockCorrespondsToCanvasPt == null)  // new rock
-            {
-                CameraSpacePoint csp = jcWall.GetCamSpacePointFromMousePoint(mouseClickPt, _mode);
-                rocksOnWallViewModel.AddRock(csp, mouseClickPt, radiusSlider.Value,
-                    radiusSlider.Value);
+                    // check rock overlaps
+                    if (rocksOnWallViewModel.IsOverlapWithRocksOnWall(
+                            mouseClickPt, newBoulderWidthOnCanvas, newBoulderHeightOnCanvas)
+                        == false)
+                    {
+                        CameraSpacePoint csp = jcWall.GetCamSpacePointFromMousePoint(mouseClickPt, _mode);
+                        if (!csp.Equals(default(CameraSpacePoint)))
+                        {
+                            rocksOnWallViewModel.AddRock(csp, mouseClickPt, newBoulderWidthOnCanvas,
+                                newBoulderHeightOnCanvas);
+                        }
+                        else
+                        {
+                            UiHelper.NotifyUser("No depth info is captured for this point!");
+                        }
+                    }
+                    else
+                    {
+                        UiHelper.NotifyUser(RockOverlapsWarningMsg);
+                    }
+                }
+                else  // rock already in list
+                {
+                    rocksOnWallViewModel.SelectedRock = rockCorrespondsToCanvasPt;
+                    boulderWidthSlider.Value = rockCorrespondsToCanvasPt.BCanvasWidth;
+                    boulderHeightSlider.Value = rockCorrespondsToCanvasPt.BCanvasHeight;
+                }
             }
-            else  // rock already in list
+            else
             {
-                rocksOnWallViewModel.SelectedRock = rockCorrespondsToCanvasPt;
+                UiHelper.NotifyUser("Please take snap shot first.");
             }
-
-            //bool isAddBoulderSuccess = jcWall.AddBoulder(mouseClickPt.X, mouseClickPt.Y, radiusSlider.Value, canvas.ActualWidth, canvas.ActualHeight, _mode, coMapper, canvas);
-            //if (isAddBoulderSuccess)
-            //{
-            //    jcWall.SelectedBoulder = jcWall.boulderList.Last();
-            //    jcWall.SelectedBoulder.DrawBoulder();
-            //}
-            //else
-            //{                
-            //    UiHelper.NotifyUser("Please take snap shot first.");
-            //}
         }
 
-        private void SnapshotWallBtn_Clicked(object sender, RoutedEventArgs e)
-        {          
-            jcWall.SnapShotWallData(colorMappedToDepthSpace, lastNotNullDepthData, lastNotNullColorData);
+        private void boulderSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Slider boulderSizeSlider = sender as Slider;
+
+            if (boulderSizeSlider.Value == 0)
+            {
+                UiHelper.NotifyUser("Zero size is not allowed.");
+                boulderSizeSlider.Value = boulderSizeSlider.Minimum + boulderSizeSlider.TickFrequency;
+            }
+
+            if (rocksOnWallViewModel != null && rocksOnWallViewModel.SelectedRock != null)
+            {
+                double newBoulderWidthOnCanvas = ConvertSliderValueToSizeOnCanvas(boulderWidthSlider.Value);
+                double newBoulderHeightOnCanvas = ConvertSliderValueToSizeOnCanvas(boulderHeightSlider.Value);
+
+                // check rock overlaps
+                if (rocksOnWallViewModel.IsOverlapWithRocksOnWallOtherThanSelectedRock(
+                        rocksOnWallViewModel.SelectedRock.BCanvasPoint,
+                        newBoulderWidthOnCanvas, newBoulderHeightOnCanvas)
+                    == false)
+                {
+                    string boulderSizeSliderName = boulderSizeSlider.Name;
+                    switch (boulderSizeSliderName)
+                    {
+                        case "boulderHeightSlider":
+                            rocksOnWallViewModel.ChangeHeightOfSelectedRock(newBoulderHeightOnCanvas);
+                            break;
+                        case "boulderWidthSlider":
+                        default:
+                            rocksOnWallViewModel.ChangeWidthOfSelectedRock(newBoulderWidthOnCanvas);
+                            break;
+                    }
+                }
+                else
+                {
+                    UiHelper.NotifyUser(RockOverlapsWarningMsg);
+
+                    // restore original value
+                    boulderSizeSlider.Value -= boulderSizeSlider.TickFrequency;
+                }
+            }
         }
 
         private void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
@@ -232,6 +362,17 @@ namespace JustClimbTrial.Views.Pages
                 }
 
             }
+        }
+
+        #endregion
+
+
+        #region slider value converters
+
+        private static double ConvertSliderValueToSizeOnCanvas(double sliderValue)
+        {
+            double multiplicationFactor = 1;
+            return multiplicationFactor * sliderValue;
         }
 
         #endregion

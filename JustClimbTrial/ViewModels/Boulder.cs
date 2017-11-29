@@ -1,18 +1,17 @@
-﻿using Microsoft.Kinect;
+﻿using JustClimbTrial.Extensions;
+using Microsoft.Kinect;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using JustClimbTrial.Extensions;
-using System;
 
-namespace JustClimbTrial.Kinect
+namespace JustClimbTrial.ViewModels
 {
     public class Boulder
     {
         //index of Boulder to be stored to database
         private ushort _index;
-        
+
         //cameraspace positions (x/y/z)
         private CameraSpacePoint bCamPoint;
 
@@ -25,19 +24,75 @@ namespace JustClimbTrial.Kinect
         private double bWidth;
         private double bHeight;
 
-        public Shape BoulderShape;
+        private Shape boulderShape;
         private Canvas bCanvas;
-        
+
 
         public ushort Index { get { return _index; } set { _index = value; } }
         public double BWidth { get { return bWidth; } set { bWidth = value; } }
         public double BHeight { get { return bHeight; } set { bHeight = value; } }
         public Point BPoint { get { return bPoint; } set { bPoint = value; } }
         public Point BCanvasPoint { get { return bCanvasPoint; } set { bCanvasPoint = value; } }
+        public Shape BoulderShape { get { return boulderShape; } set { boulderShape = value; } }
+
+        // derive quantities
+        // non-normalised
+        public double BCanvasWidth
+        {
+            get
+            {
+                return boulderShape.Width;
+            }
+        }
+
+        public double BCanvasHeight
+        {
+            get
+            {
+                return boulderShape.Height;
+            }            
+        }
+
+
+        // derived quantities
+        // normalised
+        private double smallX
+        {
+            get
+            {
+                return bPoint.X - bWidth * 0.5;
+            }
+        }
+
+        private double largeX
+        {
+            get
+            {
+                return bPoint.X + bWidth * 0.5;
+            }
+        }
+
+        private double smallY
+        {
+            get
+            {
+                return bPoint.Y - bHeight * 0.5;
+            }
+        }
+
+        private double largeY
+        {
+            get
+            {
+                return bPoint.Y + bHeight * 0.5;
+            }
+        }
 
 
         #region Constructors
-        public Boulder() { }
+
+        // used only within methods in this class
+        private Boulder() { }
 
         public Boulder(CameraSpacePoint camPoint, Point ptOnCanvas, 
             double widthOnCanvas, double heightOnCanvas, Canvas canvas)
@@ -48,8 +103,8 @@ namespace JustClimbTrial.Kinect
             bWidth = bCanvas.GetNormalisedLengthWrtWidth(widthOnCanvas);
             bHeight = bCanvas.GetNormalisedLengthWrtHeight(heightOnCanvas);
 
-            bCanvasPoint = bCanvas.GetActualPoint(bPoint);
-            BoulderShape = CreateEllipse();
+            bCanvasPoint = ptOnCanvas;
+            boulderShape = CreateEllipse();
         }
 
         public Boulder(float xP, float yP, float zP, Point ptOnCanvas, double widthOnCanvas, double heightOnCanvas, Canvas canvas)
@@ -59,7 +114,80 @@ namespace JustClimbTrial.Kinect
         : this(coMapper.MapDepthPointToCameraSpace(depPoint, dep), ptOnCanvas, widthOnCanvas, heightOnCanvas, canvas) { }
 
         #endregion
+
+
+        public void ChangeBWidth(double widthOnCanvas)
+        {
+            bWidth = bCanvas.GetNormalisedLengthWrtWidth(widthOnCanvas);            
+            RedrawBoulder();            
+        }
+
+        public void ChangeBHeight(double heightOnCanvas)
+        {
+            bHeight = bCanvas.GetNormalisedLengthWrtHeight(heightOnCanvas);            
+            RedrawBoulder();            
+        }
         
+        // we assume the boulder is a rectangle to determine its area
+        public bool IsCoincideWithCanvasPoint(Point canvasPoint)
+        {
+            Point normedCanvasPoint = bCanvas.GetNormalisedPoint(canvasPoint);
+            return (bPoint.X - bWidth * 0.5 < normedCanvasPoint.X && normedCanvasPoint.X < bPoint.X + bWidth * 0.5)
+                && (bPoint.Y - bHeight * 0.5 < normedCanvasPoint.Y && normedCanvasPoint.Y < bPoint.Y + bHeight * 0.5);
+
+        }
+
+        // we assume the boulder is a rectangle
+        public bool IsOverlapWithAnotherBoulder(Boulder anotherBoulder)
+        {
+            bool isWidthCoincide = !((anotherBoulder.largeX < this.smallX) || (this.largeX < anotherBoulder.smallX));
+            bool isHeightCoincide = !((anotherBoulder.largeY < this.smallY) || (this.largeY < anotherBoulder.smallY));
+            return isWidthCoincide && isHeightCoincide;
+        }
+
+        // we assume the boulder is a rectangle
+        public bool IsOverlapWithAnotherBoulder(Point rectangleOnCanvasPt, double rectangleOnCanvasWidth, double rectangleOnCanvasHeight)
+        {
+            Point rectangleOnCanvasNormedPt = bCanvas.GetNormalisedPoint(rectangleOnCanvasPt);
+            double rectangleOnCanvasNormedWidth = bCanvas.GetNormalisedLengthWrtWidth(rectangleOnCanvasWidth);
+            double rectangleOnCanvasNormedHeight = bCanvas.GetNormalisedLengthWrtWidth(rectangleOnCanvasHeight);
+            return IsOverlapWithAnotherBoulder(new Boulder
+            {
+                BPoint = rectangleOnCanvasNormedPt,
+                BWidth = rectangleOnCanvasNormedWidth,
+                BHeight = rectangleOnCanvasNormedHeight
+            });
+        }
+        
+
+        #region draw helpers
+
+        public void DrawBoulder()
+        {
+            SetBoulderTopLeftPositionOnCanvas();
+            bCanvas.Children.Add(boulderShape);
+        }
+
+        private void RedrawBoulder()
+        {
+            boulderShape.Width = bCanvas.GetActualLengthWrtWidth(bWidth);
+            boulderShape.Height = bCanvas.GetActualLengthWrtHeight(bHeight);
+
+            SetBoulderTopLeftPositionOnCanvas();
+        }
+
+        public void UndrawBoulder()
+        {
+            bCanvas.Children.Remove(boulderShape);
+            boulderShape = null;
+        }
+
+        private void SetBoulderTopLeftPositionOnCanvas()
+        {
+            Canvas.SetLeft(boulderShape, bCanvas.GetActualLengthWrtWidth(bPoint.X - bWidth * .5));
+            Canvas.SetTop(boulderShape, bCanvas.GetActualLengthWrtHeight(bPoint.Y - bHeight * .5));
+        }
+
         private Shape CreateEllipse()
         {
             Ellipse boulderEllipse = new Ellipse
@@ -67,51 +195,13 @@ namespace JustClimbTrial.Kinect
                 Width = bCanvas.GetActualLengthWrtWidth(bWidth),
                 Height = bCanvas.GetActualLengthWrtHeight(bHeight),
                 Fill = null,
-                StrokeThickness = 5,
+                StrokeThickness = 7,
                 Stroke = new SolidColorBrush(Colors.DarkRed)
             };
-            
+
             return boulderEllipse;
         }
 
-        public void DrawBoulder()
-        {
-            Canvas.SetLeft(BoulderShape, bCanvas.GetActualLengthWrtWidth(bPoint.X - bWidth * .5));
-            Canvas.SetTop(BoulderShape, bCanvas.GetActualLengthWrtHeight(bPoint.Y - bHeight * .5));
-
-            bCanvas.Children.Add(BoulderShape);
-        }
-
-        public void RedrawBoulder()
-        {
-            BoulderShape.Width = bCanvas.GetNormalisedLengthWrtWidth(bWidth);
-            BoulderShape.Height = bCanvas.GetNormalisedLengthWrtHeight(bHeight);
-        }
-
-        public void UndrawBoulder()
-        {
-            bCanvas.Children.Remove(BoulderShape);
-        }
-
-        public void ChangeBWidth(double widthOnCanvas)
-        {
-            bWidth = bCanvas.GetNormalisedLengthWrtWidth(widthOnCanvas);
-            RedrawBoulder();
-        }
-
-        public void ChangeBHeight(double heightOnCanvas)
-        {
-            bHeight = bCanvas.GetNormalisedLengthWrtHeight(heightOnCanvas);
-            RedrawBoulder();
-        }
-
-        //we assume the boulder is a rectangle to determine its area
-        public bool IsCanvasPointCoincide(Point canvasPoint)
-        {
-            Point normedCanvasPoint = bCanvas.GetNormalisedPoint(canvasPoint);
-            return (bPoint.X - bWidth * 0.5 < normedCanvasPoint.X && normedCanvasPoint.X < bPoint.X + bWidth * 0.5)
-                && (bPoint.Y - bHeight * 0.5 < normedCanvasPoint.Y && normedCanvasPoint.Y < bPoint.Y + bHeight * 0.5);
-
-        }
+        #endregion
     }
 }

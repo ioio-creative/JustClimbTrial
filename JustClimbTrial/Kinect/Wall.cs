@@ -1,27 +1,26 @@
 ﻿using JustClimbTrial.Kinect;
 using Microsoft.Kinect;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace JustClimbTrial.ViewModels
+namespace JustClimbTrial.Kinect
 {
-    public class Wall
+    public class KinectWall
     {
-        Canvas wCanvas;
-        CoordinateMapper wallMapper;
-        DepthSpacePoint[] dCoordinatesInColorFrame { get; set; }
-        //ColorFrame wallColorFrame;
-        //DepthFrame wallDepthFrame;
-        ushort[] wallDepthData;
-        byte[] wallBitmap;
+        private Canvas wCanvas;
+        private CoordinateMapper wallMapper;
+        private DepthSpacePoint[] dCoordinatesInColorFrame { get; set; }
+        //private ColorFrame wallColorFrame;
+        //private DepthFrame wallDepthFrame;
+        private ushort[] wallDepthData;
+        private byte[] wallBitmap;
 
-        public bool IsSnapshotTaken = false;
+        private bool IsSnapshotTaken = false;
 
 
-        public Wall(Canvas canvas, CoordinateMapper coMapper)
+        public KinectWall(Canvas canvas, CoordinateMapper coMapper)
         {
             wCanvas = canvas;
             wallMapper = coMapper;
@@ -29,13 +28,22 @@ namespace JustClimbTrial.ViewModels
 
         public CameraSpacePoint GetCamSpacePointFromMousePoint(Point mousePt, SpaceMode spMode)
         {
-            if (!IsSnapshotTaken) return default(CameraSpacePoint);
+            if (!IsSnapshotTaken)
+            {
+                return default(CameraSpacePoint);
+            }
 
             Tuple<float, float> dimensions = KinectExtensions.frameDimensions[spMode];
             float x_temp = (float)(mousePt.X * dimensions.Item1 / wCanvas.ActualWidth);
             float y_temp = (float)(mousePt.Y * dimensions.Item2 / wCanvas.ActualHeight);
 
             DepthSpacePoint depPtFromMousePt = dCoordinatesInColorFrame[(int)(x_temp + 0.5f) + (int)(y_temp + 0.5f) * (int)dimensions.Item1];
+
+            if (depPtFromMousePt.X == float.NegativeInfinity && depPtFromMousePt.Y == float.NegativeInfinity)
+            {
+                return default(CameraSpacePoint);
+            }
+
             ushort depth = wallDepthData[(int)depPtFromMousePt.X + (int)(depPtFromMousePt.Y) * (int)KinectExtensions.frameDimensions[SpaceMode.Depth].Item1];
             CameraSpacePoint camPtFromMousePt = wallMapper.MapDepthPointToCameraSpace(depPtFromMousePt, depth);
 
@@ -83,7 +91,7 @@ namespace JustClimbTrial.ViewModels
         //    return isAddBoulderSuccess;
         //}
 
-        public void SnapShotWallData(DepthSpacePoint[] colorSpaceMap, ushort[] dFrameData, byte[] colFrameData)
+        public bool SnapShotWallData(DepthSpacePoint[] colorSpaceMap, ushort[] dFrameData, byte[] colFrameData)
         {
             dCoordinatesInColorFrame = colorSpaceMap;
             ExportDCoordinatesFile();
@@ -91,20 +99,22 @@ namespace JustClimbTrial.ViewModels
 
             wallDepthData = dFrameData;
             wallBitmap = colFrameData;
+
+            return IsSnapshotTaken;
         }
 
         private void ExportDCoordinatesFile()
         {
             // Set a variable to the My Documents path.
             string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string wallMapPath = mydocpath + "\\JustClimb\\Wall Log";
+            string wallMapPath = mydocpath + "\\JustClimb\\KinectWall Log";
             if (!Directory.Exists(wallMapPath))
             {
                 DirectoryInfo di = Directory.CreateDirectory(wallMapPath);
                 Console.WriteLine("Log directory created successfully at {0}.", Directory.GetCreationTime(wallMapPath));
             }
             // Write the text to a new file named "WriteFile.txt".
-            File.WriteAllText(wallMapPath + "\\Coordinate Map.txt", "Wall Coordinates");
+            File.WriteAllText(wallMapPath + "\\Coordinate Map.txt", "KinectWall Coordinates");
             // Append text to an existing file named "WriteLines.txt".
             using (StreamWriter outputFile = new StreamWriter(wallMapPath + "\\Coordinate Map.txt", true))
             {
@@ -120,5 +130,5 @@ namespace JustClimbTrial.ViewModels
         }
 
 
-    }//class Wall
+    }//class KinectWall
 }//namespace
