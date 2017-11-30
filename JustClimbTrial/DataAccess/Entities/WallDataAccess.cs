@@ -35,9 +35,11 @@ namespace JustClimbTrial.DataAccess.Entities
             proposedWall.IsDeleted = false;
             proposedWall.CreateDT = createDT;
 
-            Tuple<string, string> wallIdAndNo = KeyGenerator.GenerateNewKeyAndNo(myEntityType, createDT);
-            proposedWall.WallID = wallIdAndNo.Item1;
-            proposedWall.WallNo = wallIdAndNo.Item2;
+            //Tuple<string, string> wallIdAndNo = KeyGenerator.GenerateNewKeyAndNo(myEntityType, createDT);
+            //proposedWall.WallID = wallIdAndNo.Item1;
+            //proposedWall.WallNo = wallIdAndNo.Item2;
+
+            proposedWall.WallID = KeyGenerator.GenerateNewKey(myEntityType, createDT);
 
             database.Walls.InsertOnSubmit(proposedWall);
 

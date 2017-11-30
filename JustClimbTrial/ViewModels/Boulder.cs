@@ -9,9 +9,6 @@ namespace JustClimbTrial.ViewModels
 {
     public class Boulder
     {
-        //index of Boulder to be stored to database
-        private ushort _index;
-
         //cameraspace positions (x/y/z)
         private CameraSpacePoint bCamPoint;
 
@@ -28,12 +25,14 @@ namespace JustClimbTrial.ViewModels
         private Canvas bCanvas;
 
 
-        public ushort Index { get { return _index; } set { _index = value; } }
+        public CameraSpacePoint BCamPoint { get { return bCamPoint; } set { bCamPoint = value; } }
         public double BWidth { get { return bWidth; } set { bWidth = value; } }
         public double BHeight { get { return bHeight; } set { bHeight = value; } }
         public Point BPoint { get { return bPoint; } set { bPoint = value; } }
         public Point BCanvasPoint { get { return bCanvasPoint; } set { bCanvasPoint = value; } }
         public Shape BoulderShape { get { return boulderShape; } set { boulderShape = value; } }
+
+
 
         // derive quantities
         // non-normalised

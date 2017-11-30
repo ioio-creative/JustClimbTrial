@@ -1,4 +1,6 @@
-﻿using JustClimbTrial.Extensions;
+﻿using JustClimbTrial.DataAccess;
+using JustClimbTrial.DataAccess.Entities;
+using JustClimbTrial.Extensions;
 using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
@@ -42,7 +44,7 @@ namespace JustClimbTrial.ViewModels
                     if (selectedRock != null)
                     {
                         // draw selected rock indicator
-                        selectedRockIndicator = GetNewSelectedRockIndicator();
+                        selectedRockIndicator = GetNewSelectedRockIndicator(selectedRock.BoulderShape);
                         canvas.DrawShape(selectedRockIndicator, selectedRock.BCanvasPoint);
                     }
                 }
@@ -216,18 +218,47 @@ namespace JustClimbTrial.ViewModels
             }
         }
 
-        private static Shape GetNewSelectedRockIndicator()
+        private static Shape GetNewSelectedRockIndicator(Shape selectedRock)
         {
-            double radius = 3;
-
+            SolidColorBrush indicatorFill = new SolidColorBrush(Color.FromArgb(100, 255, 255, 0));
             return new Ellipse
             {
-                Fill = Brushes.Red,
+                Fill = indicatorFill, 
                 StrokeThickness = 0,
                 Stroke = Brushes.Red,
-                Width = radius * 2,
-                Height = radius * 2
+                Width = selectedRock.Width,
+                Height = selectedRock.Height
             };
+        }
+
+        #endregion
+
+
+        #region database
+
+        public void SaveRocksOnWall(string newWallNo)
+        {
+            if (rocksOnWall.Any())
+            {
+                // convert IList<ViewModels.Boulder> to ICollection<DataAccess.Rock>
+                ICollection<Rock> rocksToSave = rocksOnWall.Select(boulder =>
+                    new Rock
+                    {
+                        CoorX = boulder.BCamPoint.X,
+                        CoorY = boulder.BCamPoint.Y,
+                        CoorZ = boulder.BCamPoint.Z,
+                        Width = boulder.BWidth,
+                        Height = boulder.BHeight
+                    }).ToArray();
+
+                Wall newWall = new Wall
+                {
+                    WallNo = newWallNo,
+                    WallDesc = ""                 
+                };
+
+                WallAndRocksDataAccess.InsertWallAndRocks(newWall, rocksToSave, true);
+            }
         }
 
         #endregion

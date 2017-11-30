@@ -130,9 +130,6 @@
     <Compile Include="Views\Pages\NewWall.xaml.cs">
       <DependentUpon>NewWall.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Pages\RescanWall.xaml.cs">
-      <DependentUpon>RescanWall.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Pages\Routes.xaml.cs">
       <DependentUpon>Routes.xaml</DependentUpon>
     </Compile>
@@ -160,6 +157,9 @@
     <Compile Include="Views\UserControls\TrainingRockStatus.xaml.cs">
       <DependentUpon>TrainingRockStatus.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Windows\Playground.xaml.cs">
+      <DependentUpon>Playground.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -181,10 +181,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\NewWall.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Pages\RescanWall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -221,6 +217,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\TrainingRockStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\Playground.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -262,7 +262,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />
-    <Folder Include="Views\Windows\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />

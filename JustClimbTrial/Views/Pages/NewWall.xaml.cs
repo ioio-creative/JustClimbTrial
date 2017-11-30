@@ -183,7 +183,7 @@ namespace JustClimbTrial.Views.Pages
 
         private void SaveWall(object parameter = null)
         {
-            //UiHelper.NotifyUser(jcWall.SelectedBoulder.BoulderShape.Width.ToString());
+            rocksOnWallViewModel.SaveRocksOnWall(newWallNo.ToString());
         }
 
         #endregion
@@ -326,6 +326,8 @@ namespace JustClimbTrial.Views.Pages
                 {
                     cameraIMG.Source = KinectExtensions.ToBitmap(colorFrame);
                     colorFrame.CopyConvertedFrameDataToArray(lastNotNullColorData, ColorImageFormat.Bgra);
+
+                    (Parent as MainWindow).PlaygroundWindow.ShowImage(cameraIMG.Source);
                 }
                 
                 try

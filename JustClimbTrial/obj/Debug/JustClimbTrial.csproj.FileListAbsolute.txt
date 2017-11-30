@@ -86,7 +86,6 @@ D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\MainWindow.
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Dialogs\RouteSetModeSelectDialog.g.cs
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Dialogs\VideoPlaybackDialog.g.cs
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\NewWall.g.cs
-D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\RescanWall.g.cs
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\Routes.g.cs
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\GameStart.g.cs
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\JustClimbHome.g.cs
@@ -111,7 +110,6 @@ D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\MainWindow.
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Dialogs\RouteSetModeSelectDialog.baml
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Dialogs\VideoPlaybackDialog.baml
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\NewWall.baml
-D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\RescanWall.baml
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\Routes.baml
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\GameStart.baml
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\JustClimbHome.baml
@@ -125,3 +123,5 @@ D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTr
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.Properties.Resources.resources
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.csproj.GenerateResource.Cache
 D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.csproj.CoreCompileInputs.cache
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Windows\Playground.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Windows\Playground.baml
