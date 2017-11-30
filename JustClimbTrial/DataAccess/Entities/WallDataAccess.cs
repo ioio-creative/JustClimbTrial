@@ -35,9 +35,11 @@ namespace JustClimbTrial.DataAccess.Entities
             proposedWall.IsDeleted = false;
             proposedWall.CreateDT = createDT;
 
-            Tuple<string, string> wallIdAndNo = KeyGenerator.GenerateNewKeyAndNo(myEntityType, createDT);
-            proposedWall.WallID = wallIdAndNo.Item1;
-            proposedWall.WallNo = wallIdAndNo.Item2;
+            //Tuple<string, string> wallIdAndNo = KeyGenerator.GenerateNewKeyAndNo(myEntityType, createDT);
+            //proposedWall.WallID = wallIdAndNo.Item1;
+            //proposedWall.WallNo = wallIdAndNo.Item2;
+
+            proposedWall.WallID = KeyGenerator.GenerateNewKey(myEntityType, createDT);
 
             database.Walls.InsertOnSubmit(proposedWall);
 
@@ -74,6 +76,22 @@ namespace JustClimbTrial.DataAccess.Entities
             get
             {
                 return ValidWalls.OrderBy(x => x.CreateDT).LastOrDefault();
+            }
+        }
+
+        public static int LargestWallNo
+        {
+            get
+            {
+                return Walls.Select(x => Convert.ToInt32(x.WallNo)).Max();
+            }
+        }
+
+        public static int LargestValidWallNo
+        {
+            get
+            {
+                return ValidWalls.Select(x => Convert.ToInt32(x.WallNo)).Max();
             }
         }
     }

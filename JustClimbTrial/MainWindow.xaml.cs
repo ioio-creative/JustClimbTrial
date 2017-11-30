@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JustClimbTrial.Views.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,20 @@ namespace JustClimbTrial
     /// </summary>
     public partial class MainWindow : NavigationWindow
     {
+        private Playground playgroundWindow;
+
+        public Playground PlaygroundWindow
+        {
+            get { return playgroundWindow; }            
+        }
+
         public MainWindow()
         {
             InitializeComponent();
+
+            playgroundWindow = new Playground();
+            playgroundWindow.Show();
+
         }
     }
 }

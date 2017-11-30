@@ -96,12 +96,14 @@
     <Compile Include="DataAccess\Entities\TrainingRouteVideoDataAccess.cs" />
     <Compile Include="Enums\RockOnBoulderStatus.cs" />
     <Compile Include="Enums\ClimbMode.cs" />
+    <Compile Include="Extensions\CanvasExtension.cs" />
     <Compile Include="Extensions\EllipseExtension.cs" />
     <Compile Include="Extensions\RockExtension.cs" />
     <Compile Include="Globals\AppGlobal.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
-    <Compile Include="Kinect\Boulder.cs" />
+    <Compile Include="Helpers\UiHelper.cs" />
+    <Compile Include="ViewModels\Boulder.cs" />
     <Compile Include="Kinect\KinectExtensions.cs" />
     <Compile Include="Kinect\SpacePointBase.cs" />
     <Compile Include="Kinect\Wall.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Mvvm\UI\FilteringDataGrid.cs" />
     <Compile Include="ViewModels\GameStartViewModel.cs" />
     <Compile Include="ViewModels\RockOnRouteViewModel.cs" />
+    <Compile Include="ViewModels\RocksOnWallViewModel.cs" />
     <Compile Include="ViewModels\RouteSetViewModel.cs" />
     <Compile Include="ViewModels\RoutesViewModel.cs" />
     <Compile Include="ViewModels\RouteVideoViewModel.cs" />
@@ -126,9 +129,6 @@
     </Compile>
     <Compile Include="Views\Pages\NewWall.xaml.cs">
       <DependentUpon>NewWall.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Pages\RescanWall.xaml.cs">
-      <DependentUpon>RescanWall.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\Routes.xaml.cs">
       <DependentUpon>Routes.xaml</DependentUpon>
@@ -157,6 +157,9 @@
     <Compile Include="Views\UserControls\TrainingRockStatus.xaml.cs">
       <DependentUpon>TrainingRockStatus.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Windows\Playground.xaml.cs">
+      <DependentUpon>Playground.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -178,10 +181,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\NewWall.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Pages\RescanWall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -218,6 +217,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\TrainingRockStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\Playground.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -259,7 +262,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />
-    <Folder Include="Views\Windows\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />

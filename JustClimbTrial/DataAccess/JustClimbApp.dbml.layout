@@ -20,12 +20,6 @@
         <elementListCompartment Id="01d9494c-e2a9-4a37-8be6-c48a9c9685db" absoluteBounds="3.5149999999999997, 6.3350000000000009, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="b19f49d6-d946-453e-bd82-b64f9de2f72f" absoluteBounds="1.25, 3, 2, 2.5401025390625">
-      <DataClassMoniker Name="/JustClimbAppDataContext/Rock" />
-      <nestedChildShapes>
-        <elementListCompartment Id="6f86a7f8-e75a-4753-bc46-c91752c6ace8" absoluteBounds="1.2649999999999997, 3.46, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
     <classShape Id="9b86071b-62cb-452f-acb6-5ef4e9333b3f" absoluteBounds="5.875, 5.875, 2, 2.1554996744791666">
       <DataClassMoniker Name="/JustClimbAppDataContext/RockOnBoulderRoute" />
       <nestedChildShapes>
@@ -60,6 +54,12 @@
       <DataClassMoniker Name="/JustClimbAppDataContext/Wall" />
       <nestedChildShapes>
         <elementListCompartment Id="1c8e373d-70ee-4513-9af6-fc5a349edb50" absoluteBounds="3.6400000000000006, 3.585, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="bea3cc6e-5b66-4d45-8284-06141fb5b0b3" absoluteBounds="1.125, 2.75, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/JustClimbAppDataContext/Rock" />
+      <nestedChildShapes>
+        <elementListCompartment Id="bee88722-b1d1-4726-be49-ea2dd82cc270" absoluteBounds="1.1400000000000001, 3.21, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>

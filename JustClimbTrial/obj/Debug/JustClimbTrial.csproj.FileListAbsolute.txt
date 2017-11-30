@@ -81,3 +81,47 @@ C:\Users\User\Documents\Projects\JustClimbTrial\JustClimbTrial\obj\Debug\JustCli
 C:\Users\User\Documents\Projects\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.csproj.CoreCompileInputs.cache
 C:\Users\User\Documents\Projects\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.exe
 C:\Users\User\Documents\Projects\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.pdb
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.csprojResolveAssemblyReference.cache
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\MainWindow.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Dialogs\RouteSetModeSelectDialog.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Dialogs\VideoPlaybackDialog.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\NewWall.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\Routes.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\GameStart.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\JustClimbHome.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\ModeSelect.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\RouteSet.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\VideoPlaybackDialogConfirm.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\UserControls\BoulderRockStatus.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\UserControls\HeaderRowNavigation.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\UserControls\TrainingRockStatus.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\App.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial_MarkupCompile.cache
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial_MarkupCompile.lref
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.exe
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.pdb
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\bin\Debug\JustClimbTrial.exe.config
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\bin\Debug\JustClimbTrial.exe
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\bin\Debug\JustClimbTrial.pdb
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\bin\Debug\Microsoft.Kinect.dll
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\bin\Debug\Microsoft.Kinect.xml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\MainWindow.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Dialogs\RouteSetModeSelectDialog.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Dialogs\VideoPlaybackDialog.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\NewWall.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\Routes.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\GameStart.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\JustClimbHome.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\ModeSelect.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\RouteSet.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\VideoPlaybackDialogConfirm.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\UserControls\BoulderRockStatus.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\UserControls\HeaderRowNavigation.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\UserControls\TrainingRockStatus.baml
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.g.resources
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.Properties.Resources.resources
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.csproj.GenerateResource.Cache
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.csproj.CoreCompileInputs.cache
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Windows\Playground.g.cs
+D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Windows\Playground.baml

@@ -79,7 +79,7 @@ namespace JustClimbTrial.DataAccess.Entities
             return BoulderRouteById(routeId).RouteNo;
         }
 
-        public static int LargestRouteNo
+        public static int LargestBoulderRouteNo
         {
             get
             {
@@ -87,7 +87,7 @@ namespace JustClimbTrial.DataAccess.Entities
             }
         }
 
-        public static int LargestValidRouteNo
+        public static int LargestValidBoulderRouteNo
         {
             get
             {

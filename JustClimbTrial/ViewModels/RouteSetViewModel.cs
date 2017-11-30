@@ -3,12 +3,7 @@ using JustClimbTrial.DataAccess.Entities;
 using JustClimbTrial.Enums;
 using JustClimbTrial.Globals;
 using JustClimbTrial.Mvvm.Infrastructure;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JustClimbTrial.ViewModels
 {

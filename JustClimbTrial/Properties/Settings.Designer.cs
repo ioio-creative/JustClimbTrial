@@ -12,7 +12,7 @@ namespace JustClimbTrial.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -55,7 +55,7 @@ namespace JustClimbTrial.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=sing-mssql-1.chdc0elhkwnt.ap-southeast-1.rds.amazonaws.com;Initial Ca" +
-            "talog=JustClimb;User ID=IoioSa;Password=Ioio0512")]
+            "talog=JustClimb;User ID=IoioSa;Password=Ioio0512;Persist Security Info=True;")]
         public string JustClimbConnectionString1 {
             get {
                 return ((string)(this["JustClimbConnectionString1"]));

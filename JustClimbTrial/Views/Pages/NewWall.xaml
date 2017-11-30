@@ -8,9 +8,10 @@
       xmlns:userControl="clr-namespace:JustClimbTrial.Views.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="360" d:DesignWidth="640"
-    Title="NewWall"
-    Loaded="NewWall_Loaded"
-    Unloaded="NewWall_Unloaded">
+    Title="Just Climb - Scan Wall"
+    WindowTitle="Just Climb - Scan Wall"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -34,27 +35,38 @@
             <Viewbox Name="viewBox" Grid.Column="0">
                 <Grid>
                     <Image Name="cameraIMG" />
-                    <Canvas x:Name="canvas" Background="Transparent" MouseDown="Canvas_MouseDown" Width="{Binding ActualWidth, ElementName=cameraIMG, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=cameraIMG, Mode=OneWay}">
-                    </Canvas>
+                    <Canvas x:Name="canvas" Background="Transparent" MouseDown="canvas_MouseDown" 
+                            Width="{Binding ActualWidth, ElementName=cameraIMG, Mode=OneWay}" 
+                            Height="{Binding ActualHeight, ElementName=cameraIMG, Mode=OneWay}" />
                 </Grid>
             </Viewbox>
 
             <StackPanel Grid.Column="1">
-                <Button Name="newWallBtn" Content="Snapshot Wall" 
-                        FontSize="10"  Height="50" Margin="50 10 50 10" 
-                        Click="SnapshotWallBtn_Clicked"  />
+                <Button Name="snapshotWallBtn" Content="Snapshot Wall" 
+                        FontSize="10" Height="50" Margin="50 10 50 10" />
+                <!-- width slider -->
                 <DockPanel Margin="15 5 15 0">
-                    <TextBlock x:Name="sliderLabel" Text="Boulder Size" DockPanel.Dock="Left"></TextBlock>
-                    <TextBlock Text="{Binding ElementName=radiusSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
+                    <TextBlock Text="Boulder Width" DockPanel.Dock="Left" />
+                    <TextBlock Text="{Binding ElementName=boulderWidthSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
                                DockPanel.Dock="Right" TextAlignment="Right" RenderTransformOrigin="2.157,0.156" />
                 </DockPanel>
-                <Slider x:Name="radiusSlider" Value="50" Margin="20 10 20 10" Minimum="0" Maximum="100" TickPlacement="BottomRight" TickFrequency="5" IsSnapToTickEnabled="True" 
-                        ValueChanged="RadiusSlider_ValueChanged" />
-                <Button Name="saveWallBtn" Content="Save Wall" FontSize="10"  Height="50" Margin="50 10 50 10" Click="SaveWallBtn_Click" />
-                
-
+                <Slider x:Name="boulderWidthSlider" Value="50" Margin="20 10 20 10" Minimum="0" Maximum="100" TickPlacement="BottomRight" TickFrequency="5" 
+                        IsSnapToTickEnabled="True" ValueChanged="boulderSizeSlider_ValueChanged" />
+                <!-- end of wall slider -->
+                <!-- height slider -->
+                <DockPanel Margin="15 5 15 0">
+                    <TextBlock Text="Boulder Height" DockPanel.Dock="Left" />
+                    <TextBlock Text="{Binding ElementName=boulderHeightSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
+                               DockPanel.Dock="Right" TextAlignment="Right" RenderTransformOrigin="2.157,0.156" />
+                </DockPanel>
+                <Slider x:Name="boulderHeightSlider" Value="50" Margin="20 10 20 10" Minimum="0" Maximum="100" TickPlacement="BottomRight" TickFrequency="5" IsSnapToTickEnabled="True" 
+                        ValueChanged="boulderSizeSlider_ValueChanged" />
+                <!-- end of height slider -->
+                <Button Name="deselectRockBtn" Content="De-select Rock" FontSize="10" Height="50" Margin="50 10 50 10" />
+                <Button Name="removeRockBtn" Content="Remove Rock" FontSize="10" Height="50" Margin="50 10 50 10" />
+                <Button Name="removeAllRocksBtn" Content="Remove All Rocks" FontSize="10" Height="50" Margin="50 10 50 10" />
+                <Button Name="saveWallBtn" Content="Save Wall" FontSize="10"  Height="50" Margin="50 10 50 10" />
             </StackPanel>
-                        
         </Grid>
         <!-- end of grid 1 -->
         <!-- end of row 1 -->

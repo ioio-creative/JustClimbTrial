@@ -3,22 +3,17 @@ using JustClimbTrial.DataAccess.Entities;
 using JustClimbTrial.Enums;
 using JustClimbTrial.Extensions;
 using JustClimbTrial.Globals;
+using JustClimbTrial.Helpers;
 using JustClimbTrial.Mvvm.Infrastructure;
 using JustClimbTrial.ViewModels;
 using JustClimbTrial.Views.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace JustClimbTrial.Views.Pages
@@ -102,7 +97,7 @@ namespace JustClimbTrial.Views.Pages
             switch (aClimbMode)
             {
                 case ClimbMode.Training:
-                    newRouteNo = TrainingRouteDataAccess.LargestRouteNo + 1;
+                    newRouteNo = TrainingRouteDataAccess.LargestTrainingRouteNo + 1;
                     Title = string.Format(titleFormat, "Training");
                     navHead.HeaderRowTitle =
                         string.Format(headerRowTitleFormat, "Training", newRouteNo);
@@ -110,7 +105,7 @@ namespace JustClimbTrial.Views.Pages
                     break;
                 case ClimbMode.Boulder:
                 default:
-                    newRouteNo = BoulderRouteDataAccess.LargestRouteNo + 1;
+                    newRouteNo = BoulderRouteDataAccess.LargestBoulderRouteNo + 1;
                     Title = string.Format(titleFormat, "Boulder");
                     navHead.HeaderRowTitle =
                         string.Format(headerRowTitleFormat, "Boulder", newRouteNo);                            
@@ -164,7 +159,7 @@ namespace JustClimbTrial.Views.Pages
             }
             else
             {
-                MessageBox.Show("No rocks registered with the wall!");
+                UiHelper.NotifyUser("No rocks registered with the wall!");
             }
 
             SetUpBtnCommandsInRockStatusUserControls();
@@ -300,7 +295,8 @@ namespace JustClimbTrial.Views.Pages
 
             foreach (Rock rock in rocksOnWall)
             {
-                double rockRadius = rock.Radius.GetValueOrDefault(0);
+                // TODO: change find nearest rock logic
+                double rockRadius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0)) * 0.5;
                 if ((rock.GetPoint() - touchPt).LengthSquared < rockRadius * rockRadius)
                 {
                     return rock;
@@ -383,7 +379,9 @@ namespace JustClimbTrial.Views.Pages
 
         private Shape DrawRockOnWallOnCanvas(Rock rock)
         {
-            Ellipse rockOnWallCircle = GetNewRockOnWallCircle(rock.Radius.GetValueOrDefault(0));
+            // TODO: change draw ellipse logic
+            double radius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0));
+            Ellipse rockOnWallCircle = GetNewRockOnWallCircle(radius);
             DrawCircleOnCanvas(rockOnWallCircle, rock.CoorX.GetValueOrDefault(0), rock.CoorY.GetValueOrDefault(0));
             return rockOnWallCircle;
         }
@@ -409,21 +407,27 @@ namespace JustClimbTrial.Views.Pages
 
         private Shape DrawStartRockOnCanvas(Rock rock)
         {
-            Ellipse startRockCircle = GetNewStartRockCircle(rock.Radius.GetValueOrDefault(0));
+            // TODO: change draw ellipse logic
+            double radius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0));
+            Ellipse startRockCircle = GetNewStartRockCircle(radius);
             DrawCircleOnCanvas(startRockCircle, rock.CoorX.GetValueOrDefault(0), rock.CoorY.GetValueOrDefault(0));
             return startRockCircle;
         }
 
         private Shape DrawIntermediateRockOnCanvas(Rock rock)
         {
-            Ellipse intermediateRockCircle = GetNewIntermediateRockCircle(rock.Radius.GetValueOrDefault(0));
+            // TODO: change draw ellipse logic
+            double radius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0));
+            Ellipse intermediateRockCircle = GetNewIntermediateRockCircle(radius);
             DrawCircleOnCanvas(intermediateRockCircle, rock.CoorX.GetValueOrDefault(0), rock.CoorY.GetValueOrDefault(0));
             return intermediateRockCircle;
         }
 
         private Shape DrawEndRockOnCanvas(Rock rock)
         {
-            Ellipse endRockCircle = GetNewEndRockCircle(rock.Radius.GetValueOrDefault(0));
+            // TODO: change draw ellipse logic
+            double radius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0));
+            Ellipse endRockCircle = GetNewEndRockCircle(radius);
             DrawCircleOnCanvas(endRockCircle, rock.CoorX.GetValueOrDefault(0), rock.CoorY.GetValueOrDefault(0));
             return endRockCircle;
         }

@@ -1,5 +1,6 @@
 ﻿using JustClimbTrial.DataAccess;
 using JustClimbTrial.Enums;
+using JustClimbTrial.Helpers;
 using JustClimbTrial.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
@@ -76,9 +77,8 @@ namespace JustClimbTrial.Views.Pages
         {
             RouteViewModel route = dgridRoutes.SelectedItem as RouteViewModel;
             if (route == null)
-            {
-                // MessageBox is modal automatically
-                MessageBox.Show("Please select a route.");
+            {                
+                UiHelper.NotifyUser("Please select a route.");
             }
             else
             {

@@ -39,9 +39,6 @@ namespace JustClimbTrial.DataAccess
     partial void InsertBoulderRouteVideo(BoulderRouteVideo instance);
     partial void UpdateBoulderRouteVideo(BoulderRouteVideo instance);
     partial void DeleteBoulderRouteVideo(BoulderRouteVideo instance);
-    partial void InsertRock(Rock instance);
-    partial void UpdateRock(Rock instance);
-    partial void DeleteRock(Rock instance);
     partial void InsertRockOnBoulderRoute(RockOnBoulderRoute instance);
     partial void UpdateRockOnBoulderRoute(RockOnBoulderRoute instance);
     partial void DeleteRockOnBoulderRoute(RockOnBoulderRoute instance);
@@ -60,6 +57,9 @@ namespace JustClimbTrial.DataAccess
     partial void InsertWall(Wall instance);
     partial void UpdateWall(Wall instance);
     partial void DeleteWall(Wall instance);
+    partial void InsertRock(Rock instance);
+    partial void UpdateRock(Rock instance);
+    partial void DeleteRock(Rock instance);
     #endregion
 		
 		public JustClimbAppDataContext() : 
@@ -116,14 +116,6 @@ namespace JustClimbTrial.DataAccess
 			}
 		}
 		
-		public System.Data.Linq.Table<Rock> Rocks
-		{
-			get
-			{
-				return this.GetTable<Rock>();
-			}
-		}
-		
 		public System.Data.Linq.Table<RockOnBoulderRoute> RockOnBoulderRoutes
 		{
 			get
@@ -169,6 +161,14 @@ namespace JustClimbTrial.DataAccess
 			get
 			{
 				return this.GetTable<Wall>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Rock> Rocks
+		{
+			get
+			{
+				return this.GetTable<Rock>();
 			}
 		}
 	}
@@ -694,260 +694,6 @@ namespace JustClimbTrial.DataAccess
 					this._DeletedDT = value;
 					this.SendPropertyChanged("DeletedDT");
 					this.OnDeletedDTChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Rock")]
-	public partial class Rock : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private string _RockID;
-		
-		private string _Wall;
-		
-		private System.Nullable<double> _CoorX;
-		
-		private System.Nullable<double> _CoorY;
-		
-		private System.Nullable<double> _CoorZ;
-		
-		private System.Nullable<System.DateTime> _CreateDT;
-		
-		private System.Nullable<bool> _IsDeleted;
-		
-		private System.Nullable<System.DateTime> _DeleteDT;
-		
-		private System.Nullable<double> _Radius;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnRockIDChanging(string value);
-    partial void OnRockIDChanged();
-    partial void OnWallChanging(string value);
-    partial void OnWallChanged();
-    partial void OnCoorXChanging(System.Nullable<double> value);
-    partial void OnCoorXChanged();
-    partial void OnCoorYChanging(System.Nullable<double> value);
-    partial void OnCoorYChanged();
-    partial void OnCoorZChanging(System.Nullable<double> value);
-    partial void OnCoorZChanged();
-    partial void OnCreateDTChanging(System.Nullable<System.DateTime> value);
-    partial void OnCreateDTChanged();
-    partial void OnIsDeletedChanging(System.Nullable<bool> value);
-    partial void OnIsDeletedChanged();
-    partial void OnDeleteDTChanging(System.Nullable<System.DateTime> value);
-    partial void OnDeleteDTChanged();
-    partial void OnRadiusChanging(System.Nullable<double> value);
-    partial void OnRadiusChanged();
-    #endregion
-		
-		public Rock()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RockID", DbType="VarChar(20) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
-		public string RockID
-		{
-			get
-			{
-				return this._RockID;
-			}
-			set
-			{
-				if ((this._RockID != value))
-				{
-					this.OnRockIDChanging(value);
-					this.SendPropertyChanging();
-					this._RockID = value;
-					this.SendPropertyChanged("RockID");
-					this.OnRockIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Wall", DbType="VarChar(20)")]
-		public string Wall
-		{
-			get
-			{
-				return this._Wall;
-			}
-			set
-			{
-				if ((this._Wall != value))
-				{
-					this.OnWallChanging(value);
-					this.SendPropertyChanging();
-					this._Wall = value;
-					this.SendPropertyChanged("Wall");
-					this.OnWallChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CoorX", DbType="Float")]
-		public System.Nullable<double> CoorX
-		{
-			get
-			{
-				return this._CoorX;
-			}
-			set
-			{
-				if ((this._CoorX != value))
-				{
-					this.OnCoorXChanging(value);
-					this.SendPropertyChanging();
-					this._CoorX = value;
-					this.SendPropertyChanged("CoorX");
-					this.OnCoorXChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CoorY", DbType="Float")]
-		public System.Nullable<double> CoorY
-		{
-			get
-			{
-				return this._CoorY;
-			}
-			set
-			{
-				if ((this._CoorY != value))
-				{
-					this.OnCoorYChanging(value);
-					this.SendPropertyChanging();
-					this._CoorY = value;
-					this.SendPropertyChanged("CoorY");
-					this.OnCoorYChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CoorZ", DbType="Float")]
-		public System.Nullable<double> CoorZ
-		{
-			get
-			{
-				return this._CoorZ;
-			}
-			set
-			{
-				if ((this._CoorZ != value))
-				{
-					this.OnCoorZChanging(value);
-					this.SendPropertyChanging();
-					this._CoorZ = value;
-					this.SendPropertyChanged("CoorZ");
-					this.OnCoorZChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreateDT", DbType="DateTime")]
-		public System.Nullable<System.DateTime> CreateDT
-		{
-			get
-			{
-				return this._CreateDT;
-			}
-			set
-			{
-				if ((this._CreateDT != value))
-				{
-					this.OnCreateDTChanging(value);
-					this.SendPropertyChanging();
-					this._CreateDT = value;
-					this.SendPropertyChanged("CreateDT");
-					this.OnCreateDTChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDeleted", DbType="Bit")]
-		public System.Nullable<bool> IsDeleted
-		{
-			get
-			{
-				return this._IsDeleted;
-			}
-			set
-			{
-				if ((this._IsDeleted != value))
-				{
-					this.OnIsDeletedChanging(value);
-					this.SendPropertyChanging();
-					this._IsDeleted = value;
-					this.SendPropertyChanged("IsDeleted");
-					this.OnIsDeletedChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteDT", DbType="DateTime")]
-		public System.Nullable<System.DateTime> DeleteDT
-		{
-			get
-			{
-				return this._DeleteDT;
-			}
-			set
-			{
-				if ((this._DeleteDT != value))
-				{
-					this.OnDeleteDTChanging(value);
-					this.SendPropertyChanging();
-					this._DeleteDT = value;
-					this.SendPropertyChanged("DeleteDT");
-					this.OnDeleteDTChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Radius", DbType="Float")]
-		public System.Nullable<double> Radius
-		{
-			get
-			{
-				return this._Radius;
-			}
-			set
-			{
-				if ((this._Radius != value))
-				{
-					this.OnRadiusChanging(value);
-					this.SendPropertyChanging();
-					this._Radius = value;
-					this.SendPropertyChanged("Radius");
-					this.OnRadiusChanged();
 				}
 			}
 		}
@@ -2088,6 +1834,284 @@ namespace JustClimbTrial.DataAccess
 					this._DeleteDT = value;
 					this.SendPropertyChanged("DeleteDT");
 					this.OnDeleteDTChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Rock")]
+	public partial class Rock : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _RockID;
+		
+		private string _Wall;
+		
+		private System.Nullable<double> _CoorX;
+		
+		private System.Nullable<double> _CoorY;
+		
+		private System.Nullable<double> _CoorZ;
+		
+		private System.Nullable<System.DateTime> _CreateDT;
+		
+		private System.Nullable<bool> _IsDeleted;
+		
+		private System.Nullable<System.DateTime> _DeleteDT;
+		
+		private System.Nullable<double> _Width;
+		
+		private System.Nullable<double> _Height;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnRockIDChanging(string value);
+    partial void OnRockIDChanged();
+    partial void OnWallChanging(string value);
+    partial void OnWallChanged();
+    partial void OnCoorXChanging(System.Nullable<double> value);
+    partial void OnCoorXChanged();
+    partial void OnCoorYChanging(System.Nullable<double> value);
+    partial void OnCoorYChanged();
+    partial void OnCoorZChanging(System.Nullable<double> value);
+    partial void OnCoorZChanged();
+    partial void OnCreateDTChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreateDTChanged();
+    partial void OnIsDeletedChanging(System.Nullable<bool> value);
+    partial void OnIsDeletedChanged();
+    partial void OnDeleteDTChanging(System.Nullable<System.DateTime> value);
+    partial void OnDeleteDTChanged();
+    partial void OnWidthChanging(System.Nullable<double> value);
+    partial void OnWidthChanged();
+    partial void OnHeightChanging(System.Nullable<double> value);
+    partial void OnHeightChanged();
+    #endregion
+		
+		public Rock()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RockID", DbType="VarChar(20) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string RockID
+		{
+			get
+			{
+				return this._RockID;
+			}
+			set
+			{
+				if ((this._RockID != value))
+				{
+					this.OnRockIDChanging(value);
+					this.SendPropertyChanging();
+					this._RockID = value;
+					this.SendPropertyChanged("RockID");
+					this.OnRockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Wall", DbType="VarChar(20)")]
+		public string Wall
+		{
+			get
+			{
+				return this._Wall;
+			}
+			set
+			{
+				if ((this._Wall != value))
+				{
+					this.OnWallChanging(value);
+					this.SendPropertyChanging();
+					this._Wall = value;
+					this.SendPropertyChanged("Wall");
+					this.OnWallChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CoorX", DbType="Float")]
+		public System.Nullable<double> CoorX
+		{
+			get
+			{
+				return this._CoorX;
+			}
+			set
+			{
+				if ((this._CoorX != value))
+				{
+					this.OnCoorXChanging(value);
+					this.SendPropertyChanging();
+					this._CoorX = value;
+					this.SendPropertyChanged("CoorX");
+					this.OnCoorXChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CoorY", DbType="Float")]
+		public System.Nullable<double> CoorY
+		{
+			get
+			{
+				return this._CoorY;
+			}
+			set
+			{
+				if ((this._CoorY != value))
+				{
+					this.OnCoorYChanging(value);
+					this.SendPropertyChanging();
+					this._CoorY = value;
+					this.SendPropertyChanged("CoorY");
+					this.OnCoorYChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CoorZ", DbType="Float")]
+		public System.Nullable<double> CoorZ
+		{
+			get
+			{
+				return this._CoorZ;
+			}
+			set
+			{
+				if ((this._CoorZ != value))
+				{
+					this.OnCoorZChanging(value);
+					this.SendPropertyChanging();
+					this._CoorZ = value;
+					this.SendPropertyChanged("CoorZ");
+					this.OnCoorZChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreateDT", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreateDT
+		{
+			get
+			{
+				return this._CreateDT;
+			}
+			set
+			{
+				if ((this._CreateDT != value))
+				{
+					this.OnCreateDTChanging(value);
+					this.SendPropertyChanging();
+					this._CreateDT = value;
+					this.SendPropertyChanged("CreateDT");
+					this.OnCreateDTChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDeleted", DbType="Bit")]
+		public System.Nullable<bool> IsDeleted
+		{
+			get
+			{
+				return this._IsDeleted;
+			}
+			set
+			{
+				if ((this._IsDeleted != value))
+				{
+					this.OnIsDeletedChanging(value);
+					this.SendPropertyChanging();
+					this._IsDeleted = value;
+					this.SendPropertyChanged("IsDeleted");
+					this.OnIsDeletedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteDT", DbType="DateTime")]
+		public System.Nullable<System.DateTime> DeleteDT
+		{
+			get
+			{
+				return this._DeleteDT;
+			}
+			set
+			{
+				if ((this._DeleteDT != value))
+				{
+					this.OnDeleteDTChanging(value);
+					this.SendPropertyChanging();
+					this._DeleteDT = value;
+					this.SendPropertyChanged("DeleteDT");
+					this.OnDeleteDTChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Width", DbType="Float")]
+		public System.Nullable<double> Width
+		{
+			get
+			{
+				return this._Width;
+			}
+			set
+			{
+				if ((this._Width != value))
+				{
+					this.OnWidthChanging(value);
+					this.SendPropertyChanging();
+					this._Width = value;
+					this.SendPropertyChanged("Width");
+					this.OnWidthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Height", DbType="Float")]
+		public System.Nullable<double> Height
+		{
+			get
+			{
+				return this._Height;
+			}
+			set
+			{
+				if ((this._Height != value))
+				{
+					this.OnHeightChanging(value);
+					this.SendPropertyChanging();
+					this._Height = value;
+					this.SendPropertyChanged("Height");
+					this.OnHeightChanged();
 				}
 			}
 		}
