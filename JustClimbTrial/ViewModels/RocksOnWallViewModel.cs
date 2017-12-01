@@ -16,9 +16,10 @@ namespace JustClimbTrial.ViewModels
     {
         #region private members
 
-        private IList<Boulder> rocksOnWall = new List<Boulder>();       
+        private IList<RockViewModel> rocksOnWall = new List<RockViewModel>();       
         private Canvas canvas;
-        private Boulder selectedRock;        
+        private CoordinateMapper coorMap;
+        private RockViewModel selectedRock;        
         private Shape selectedRockIndicator;
 
         #endregion
@@ -26,7 +27,7 @@ namespace JustClimbTrial.ViewModels
 
         #region public members
 
-        public Boulder SelectedRock
+        public RockViewModel SelectedRock
         {
             get { return selectedRock; }
             set
@@ -56,9 +57,10 @@ namespace JustClimbTrial.ViewModels
 
         #region constructors
 
-        public RocksOnWallViewModel(Canvas aCanvas)
+        public RocksOnWallViewModel(Canvas aCanvas, CoordinateMapper aCoorMap)
         {
-            canvas = aCanvas;            
+            canvas = aCanvas;
+            coorMap = aCoorMap;
         }
 
         #endregion
@@ -66,11 +68,11 @@ namespace JustClimbTrial.ViewModels
 
         #region add / remove rock
 
-        public Boulder AddRock(CameraSpacePoint camSpacePt, 
-            Point canvasPt, double rockWidth, double rockHeight)
+        public RockViewModel AddRock(CameraSpacePoint camSpacePt, 
+            Size rockSizeOnCanvas)
         {
-            SelectedRock = new Boulder(camSpacePt, canvasPt, rockWidth,
-                rockHeight, canvas);
+            SelectedRock = new RockViewModel(camSpacePt, rockSizeOnCanvas,
+                canvas, coorMap);
             rocksOnWall.Add(SelectedRock);
             SelectedRock.DrawBoulder();
             return SelectedRock;
@@ -78,11 +80,11 @@ namespace JustClimbTrial.ViewModels
 
         public void RemoveRock(Point canvasPt)
         {
-            Boulder rockToBeRemoved = GetRockInListByCanvasPoint(canvasPt);
+            RockViewModel rockToBeRemoved = GetRockInListByCanvasPoint(canvasPt);
             RemoveRock(rockToBeRemoved);
         }
 
-        public void RemoveRock(Boulder rock)
+        public void RemoveRock(RockViewModel rock)
         {
             rocksOnWall.Remove(rock);
             rock.UndrawBoulder();
@@ -94,7 +96,7 @@ namespace JustClimbTrial.ViewModels
 
             if (AnyRocksInList())
             {
-                foreach (Boulder rock in rocksOnWall)
+                foreach (RockViewModel rock in rocksOnWall)
                 {
                     rock.UndrawBoulder();
                 }
@@ -113,48 +115,48 @@ namespace JustClimbTrial.ViewModels
             return rocksOnWall.Any();
         }
 
-        public bool IsRockInList(Point canvasPt)
+        public bool IsRockInListByCanvasPoint(Point canvasPt)
         {
             return GetRockInListByCanvasPoint(canvasPt) != null;
         }
 
-        public Boulder GetRockInListByCanvasPoint(Point canvasPt)
+        public RockViewModel GetRockInListByCanvasPoint(Point canvasPt)
         {
-            Boulder requiredBoulder = null;
-
-            foreach (Boulder rockOnWall in rocksOnWall)
+            if (!rocksOnWall.Any())
+            {
+                return null;
+            }
+            
+            foreach (RockViewModel rockOnWall in rocksOnWall)
             {
                 if (rockOnWall.IsCoincideWithCanvasPoint(canvasPt))                
                 {
-                    requiredBoulder = rockOnWall;
-                    break;
+                    return rockOnWall;
                 }
             }
 
-            return requiredBoulder;
+            return null;
         }
 
         public bool IsOverlapWithRocksOnWall(
-            Point ptOnCanvas, double widthOnCanvas,
-            double heightOnCanvas)
+            Point ptOnCanvas, Size sizeOnCanvas)
         {
             return IsOverlapWithRocksOnWallOtherThanSomePredicate(
-                ptOnCanvas, widthOnCanvas,
-                heightOnCanvas, (rock) => false);  // false means skipping no rocks in list during checking for overlap
+                ptOnCanvas, sizeOnCanvas,
+                (rock) => false);  // false means skipping no rocks in list during checking for overlap
         }
 
         public bool IsOverlapWithRocksOnWallOtherThanSelectedRock(
-            Point ptOnCanvas, double widthOnCanvas,
-            double heightOnCanvas)
+            Point ptOnCanvas, Size sizeOnCanvas)            
         {
             return IsOverlapWithRocksOnWallOtherThanSomePredicate(
-                ptOnCanvas, widthOnCanvas,
-                heightOnCanvas, (rock) => rock.Equals(SelectedRock));
+                ptOnCanvas, sizeOnCanvas,
+                (rock) => rock.Equals(SelectedRock));
         }
 
         public bool IsOverlapWithRocksOnWallOtherThanSomePredicate(
-            Point ptOnCanvas, double widthOnCanvas,
-            double heightOnCanvas, Predicate<Boulder> rockToSkipCheckingPredicate)
+            Point ptOnCanvas, Size sizeOnCanvas,
+            Predicate<RockViewModel> rockToSkipCheckingPredicate)
         {
             if (!AnyRocksInList())
             {
@@ -162,7 +164,7 @@ namespace JustClimbTrial.ViewModels
             }
 
             bool doOverlapsExist = false;
-            foreach (Boulder rockOnWall in rocksOnWall)
+            foreach (RockViewModel rockOnWall in rocksOnWall)
             {
                 if (rockToSkipCheckingPredicate(rockOnWall))
                 {
@@ -170,8 +172,7 @@ namespace JustClimbTrial.ViewModels
                 }
 
                 if (rockOnWall.IsOverlapWithAnotherBoulder(
-                        ptOnCanvas, widthOnCanvas,
-                        heightOnCanvas))
+                    ptOnCanvas, sizeOnCanvas))
                 {
                     doOverlapsExist = true;
                     break;
@@ -218,12 +219,17 @@ namespace JustClimbTrial.ViewModels
             }
         }
 
+        #endregion
+
+
+        #region draw helpers
+
         private static Shape GetNewSelectedRockIndicator(Shape selectedRock)
         {
             SolidColorBrush indicatorFill = new SolidColorBrush(Color.FromArgb(100, 255, 255, 0));
             return new Ellipse
             {
-                Fill = indicatorFill, 
+                Fill = indicatorFill,
                 StrokeThickness = 0,
                 Stroke = Brushes.Red,
                 Width = selectedRock.Width,
@@ -240,17 +246,10 @@ namespace JustClimbTrial.ViewModels
         {
             if (rocksOnWall.Any())
             {
-                // convert IList<ViewModels.Boulder> to ICollection<DataAccess.Rock>
-                ICollection<Rock> rocksToSave = rocksOnWall.Select(boulder =>
-                    new Rock
-                    {
-                        CoorX = boulder.BCamPoint.X,
-                        CoorY = boulder.BCamPoint.Y,
-                        CoorZ = boulder.BCamPoint.Z,
-                        Width = boulder.BWidth,
-                        Height = boulder.BHeight
-                    }).ToArray();
-
+                // convert IList<ViewModels.RockViewModel> to ICollection<DataAccess.Rock>
+                ICollection<Rock> rocksToSave = rocksOnWall.Select(
+                    rockModel => rockModel.MyRock).ToArray();
+                
                 Wall newWall = new Wall
                 {
                     WallNo = newWallNo,
@@ -259,6 +258,28 @@ namespace JustClimbTrial.ViewModels
 
                 WallAndRocksDataAccess.InsertWallAndRocks(newWall, rocksToSave, true);
             }
+        }
+
+        private bool LoadRocksOnWall(string wallId)
+        {
+            rocksOnWall = RockDataAccess.ValidRocksOnWall(wallId).Select(rock =>
+                new RockViewModel(rock, canvas)).ToList();
+            return rocksOnWall.Any();
+        }
+
+        public bool LoadAndDrawRocksOnWall(string wallId)
+        {
+            bool isAnyRocks = LoadRocksOnWall(wallId);
+
+            if (isAnyRocks)
+            {
+                foreach (RockViewModel rockVM in rocksOnWall)
+                {
+                    rockVM.DrawBoulder();
+                }
+            }
+
+            return isAnyRocks;
         }
 
         #endregion

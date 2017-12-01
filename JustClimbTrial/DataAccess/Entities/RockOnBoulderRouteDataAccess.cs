@@ -87,7 +87,7 @@ namespace JustClimbTrial.DataAccess.Entities
                     {
                         BoulderRockRole = x.BoulderStatus.ToString(),
                         BoulderRoute = boulderRouteId,
-                        Rock = x.MyRock.RockID
+                        Rock = x.MyRockViewModel.MyRock.RockID
                     }).ToArray();
 
                 InsertAll(rocksOnBoulderRoute: rocksOnBoulderRoute, isSubmitChanges: isSubmitChanges);

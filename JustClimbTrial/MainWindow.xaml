@@ -6,5 +6,5 @@
         xmlns:local="clr-namespace:JustClimbTrial"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280" 
-        Source="/Views/Pages/NewWall.xaml">
+        Source="/Views/Pages/RouteSet.xaml">
 </NavigationWindow>

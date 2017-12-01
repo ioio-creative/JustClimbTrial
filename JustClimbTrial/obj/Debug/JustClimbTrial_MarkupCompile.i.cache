@@ -4,26 +4,15 @@
 winexe
 C#
 .cs
-<<<<<<< HEAD
 C:\Users\IOIO\Documents\Projects\C#.NET WPF\JustClimbTrial\JustClimbTrial\obj\Debug\
-=======
-D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\obj\Debug\
->>>>>>> 3387e6745b08a5a0410e23c52c76739c8b5006f1
 JustClimbTrial
 none
 false
 DEBUG;TRACE
-<<<<<<< HEAD
 C:\Users\IOIO\Documents\Projects\C#.NET WPF\JustClimbTrial\JustClimbTrial\App.xaml
-14-911973932
-
-6277758549
-=======
-D:\User\Documents\Just Climb\JustClimbTrial\JustClimbTrial\App.xaml
 141706944450
 
-65-954867883
->>>>>>> 3387e6745b08a5a0410e23c52c76739c8b5006f1
+66-766824677
 161685736905
 MainWindow.xaml;Views\Dialogs\RouteSetModeSelectDialog.xaml;Views\Dialogs\VideoPlaybackDialog.xaml;Views\Pages\NewWall.xaml;Views\Pages\Routes.xaml;Views\Pages\GameStart.xaml;Views\Pages\JustClimbHome.xaml;Views\Pages\ModeSelect.xaml;Views\Pages\RouteSet.xaml;Views\Pages\VideoPlaybackDialogConfirm.xaml;Views\UserControls\BoulderRockStatus.xaml;Views\UserControls\HeaderRowNavigation.xaml;Views\UserControls\TrainingRockStatus.xaml;Views\Windows\Playground.xaml;
 
