@@ -134,7 +134,7 @@ namespace JustClimbTrial.ViewModels
             if (coorMap != null)
             {
                 bCanvasPoint = coorMap.MapCameraSpacePointToPointOnCanvas(csp, canvas, SpaceMode.Color);
-                bPoint = canvas.GetActualPoint(bCanvasPoint);
+                bPoint = canvas.GetNormalisedPoint(bCanvasPoint);
             }
         }
 
@@ -199,8 +199,10 @@ namespace JustClimbTrial.ViewModels
 
         private void SetBoulderTopLeftPositionOnCanvas()
         {
-            double normedLeft = MyRock.CoorX.GetValueOrDefault(0) - MyRock.Width.GetValueOrDefault(0) * 0.5;
-            double normedTop = MyRock.CoorY.GetValueOrDefault(0) - MyRock.Height.GetValueOrDefault(0) * 0.5;
+            //Point canvasRockPt = coorMap.MapCameraSpacePointToPointOnCanvas(MyRock.GetCameraSpacePoint(), bCanvas, SpaceMode.Color);
+
+            double normedLeft = bPoint.X - MyRock.Width.GetValueOrDefault(0) * 0.5;
+            double normedTop = bPoint.Y - MyRock.Height.GetValueOrDefault(0) * 0.5;
 
             Canvas.SetLeft(BoulderShape, BCanvas.GetActualLengthWrtWidth(normedLeft));
             Canvas.SetTop(BoulderShape, BCanvas.GetActualLengthWrtHeight(normedTop));
