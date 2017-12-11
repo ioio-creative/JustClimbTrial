@@ -9,5 +9,8 @@
     <Grid>
         <Image Name="playgroundCamera"></Image>
         <Canvas Name="playgroundCanvas" Width= "{Binding ActualWidth, ElementName=playgroundCamera, Mode=OneWay}" Height = "{Binding ActualHeight, ElementName=playgroundCamera, Mode=OneWay}"></Canvas>
+        <MediaElement Name="playgroundPlayback"
+                      Width="{Binding RelativeSource={RelativeSource Self},Path=Parent.ActualWidth}"
+                      Height="{Binding RelativeSource={RelativeSource Self},Path=Parent.ActualHeight}" />
     </Grid>
 </Window>
