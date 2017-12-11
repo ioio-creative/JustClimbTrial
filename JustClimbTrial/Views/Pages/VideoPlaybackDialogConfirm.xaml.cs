@@ -29,8 +29,7 @@ namespace JustClimbTrial.Views.Pages
 
         private void btnYes_Click(object sender, RoutedEventArgs e)
         {
-            VideoPlayback videoPlayback = new VideoPlayback();
-            this.NavigationService.Navigate(videoPlayback);
+
         }
 
         private void btnNo_Click(object sender, RoutedEventArgs e)

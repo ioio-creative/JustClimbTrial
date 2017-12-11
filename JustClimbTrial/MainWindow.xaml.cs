@@ -50,7 +50,6 @@ namespace JustClimbTrial
         private void NavigationWindow_Closed(object sender, EventArgs e)
         {
             KinectManagerClient.ColorImageSourceArrived -= HandleColorImageSourceArrived;
-            playgroundWindow.Close();
             KinectManagerClient.CloseKinect();
         }
 
