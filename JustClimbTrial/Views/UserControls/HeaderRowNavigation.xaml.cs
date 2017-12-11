@@ -110,10 +110,8 @@ namespace JustClimbTrial.Views.UserControls
         {
             if (ParentPage != null)
             {
-                //NewWall newWallPage = new NewWall();
-                //ParentPage.NavigationService.Navigate(newWallPage);
-                VideoPlaybackDialog videoDialog = new VideoPlaybackDialog();
-                videoDialog.ShowDialog();
+                NewWall newWallPage = new NewWall();
+                ParentPage.NavigationService.Navigate(newWallPage);
             }
         }
 

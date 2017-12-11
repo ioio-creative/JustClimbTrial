@@ -173,5 +173,3 @@ C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimb
 C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.exe
 C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.pdb
 C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.csprojResolveAssemblyReference.cache
-C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\VideoPlayback.g.cs
-C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\obj\Debug\Views\Pages\VideoPlayback.baml
