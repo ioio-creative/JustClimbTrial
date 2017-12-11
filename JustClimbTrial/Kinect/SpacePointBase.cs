@@ -51,9 +51,10 @@ namespace JustClimbTrial.Kinect
         {    
             return ScaleTo(width, height, dimensions.Item1, dimensions.Item2);
         }
+
         public SpacePointBase ScaleTo(double width, double height, SpaceMode mode)
         {
-            Tuple<float, float> dimensions = KinectExtensions.frameDimensions[mode];
+            Tuple<float, float> dimensions = KinectExtensions.FrameDimensions[mode];
             return ScaleTo(width, height, dimensions.Item1, dimensions.Item2);
         }
 

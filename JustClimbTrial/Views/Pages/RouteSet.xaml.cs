@@ -7,6 +7,7 @@ using JustClimbTrial.Helpers;
 using JustClimbTrial.Mvvm.Infrastructure;
 using JustClimbTrial.ViewModels;
 using JustClimbTrial.Views.UserControls;
+using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,43 +37,17 @@ namespace JustClimbTrial.Views.Pages
 
         #region private members
 
-        private ClimbMode routeSetClimbMode;
-        private RouteSetViewModel viewModel;
         private int newRouteNo;
-        private IEnumerable<Rock> rocksOnWall;
-        private IList<RockOnRouteViewModel> rocksOnRoute = new List<RockOnRouteViewModel>();
-        private RockOnRouteViewModel _selectedRockOnRoute;
-        private Ellipse selectedRockIndicator;
+        private ClimbMode routeSetClimbMode;
+        private RouteSetViewModel routeSetViewModel;
+        private RocksOnWallViewModel rocksOnWallViewModel;
+        private RocksOnRouteViewModel rocksOnRouteViewModel;
+
+        // declare Kinect object and frame reader
+        private KinectSensor kinectSensor;
+        private MultiSourceFrameReader mulSourceReader;
 
         #endregion
-
-
-        private RockOnRouteViewModel selectedRockOnRoute
-        {
-            get { return _selectedRockOnRoute; }
-            set
-            {
-                if (_selectedRockOnRoute != value)
-                {
-                    _selectedRockOnRoute = value;
-
-                    // remove old selected rock indicator               
-                    if (selectedRockIndicator != null)
-                    {
-                        RemoveShapeFromCanvas(selectedRockIndicator);
-                    }
-
-                    if (_selectedRockOnRoute != null)
-                    {
-                        // draw selected rock indicator
-                        selectedRockIndicator = GetNewSelectedRockIndicatorCircle();
-                        DrawCircleOnCanvas(selectedRockIndicator,
-                            _selectedRockOnRoute.MyRock.CoorX.GetValueOrDefault(0),
-                            _selectedRockOnRoute.MyRock.CoorY.GetValueOrDefault(0));
-                    }
-                }
-            }
-        }
 
 
         public RouteSet() : this(ClimbMode.Boulder) { }
@@ -83,10 +58,10 @@ namespace JustClimbTrial.Views.Pages
 
             InitializeComponent();
 
-            viewModel = DataContext as RouteSetViewModel;
-            if (viewModel != null)
+            routeSetViewModel = DataContext as RouteSetViewModel;
+            if (routeSetViewModel != null)
             {
-                viewModel.SetClimbMode(aClimbMode);
+                routeSetViewModel.SetClimbMode(aClimbMode);
             }
 
             // set titles
@@ -150,29 +125,31 @@ namespace JustClimbTrial.Views.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            viewModel.LoadData();
-            rocksOnWall = RockDataAccess.ValidRocksOnWall(AppGlobal.WallID);
+            routeSetViewModel.LoadData();
 
-            if (rocksOnWall.Any())
-            {
-                DrawRocksOnWallOnCanvas(rocksOnWall);
-            }
-            else
-            {
-                UiHelper.NotifyUser("No rocks registered with the wall!");
-            }
+            rocksOnWallViewModel = new RocksOnWallViewModel(canvasWall, kinectSensor.CoordinateMapper);
+            bool isAnyRocksOnWall = rocksOnWallViewModel.
+                LoadAndDrawRocksOnWall(AppGlobal.WallID);
+
+            rocksOnRouteViewModel = new RocksOnRouteViewModel(canvasWall);
 
             SetUpBtnCommandsInRockStatusUserControls();
+
+            if (!isAnyRocksOnWall)
+            {
+                UiHelper.NotifyUser("No rocks registered with the wall!");
+            }            
         }
 
         private void canvasWall_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Point mousePoint = e.GetPosition(sender as Canvas);
-            Rock nearestRockOnWall = FindNearestRockOnWallFromTouchPoint(mousePoint);
+            RockViewModel nearestRockOnWall = rocksOnWallViewModel.GetRockInListByCanvasPoint(mousePoint);
             if (nearestRockOnWall != null)
             {
-                selectedRockOnRoute = FindRockOnRouteViewModel(nearestRockOnWall);
-                bool isRockAlreadyOnTheRoute = selectedRockOnRoute != null;
+                rocksOnRouteViewModel.SelectedRockOnRoute = 
+                    rocksOnRouteViewModel.FindRockOnRouteViewModel(nearestRockOnWall);
+                bool isRockAlreadyOnTheRoute = !rocksOnRouteViewModel.IsSelectedRockOnRouteNull();
 
                 if (routeSetClimbMode == ClimbMode.Training)
                 {
@@ -182,11 +159,13 @@ namespace JustClimbTrial.Views.Pages
                 {
                     if (!isRockAlreadyOnTheRoute)  // new rock on route
                     {
-                        selectedRockOnRoute = new RockOnRouteViewModel
+                        rocksOnRouteViewModel.SelectedRockOnRoute = new RockOnRouteViewModel
                         {
-                            MyRock = nearestRockOnWall
+                            MyRockViewModel = nearestRockOnWall
                         };
-                        rocksOnRoute.Add(selectedRockOnRoute);
+
+                        rocksOnRouteViewModel.AddSelectedRockToRoute();                            
+                        
                         SetSelectedBoulderRockToIntermediate();
                     }
                 }                
@@ -204,12 +183,10 @@ namespace JustClimbTrial.Views.Pages
             
             if (routeSetClimbMode == ClimbMode.Boulder)
             {
-                if (rocksOnRoute.Any())
+                if (rocksOnRouteViewModel.AnyRocksInRoute())
                 {
                     BoulderRoute newBoulderRoute = CreateBoulderRouteFromUi();
-
-                    BoulderRouteAndRocksDataAccess.InsertRouteAndRocksOnRoute(
-                        newBoulderRoute, rocksOnRoute, true);                        
+                    rocksOnRouteViewModel.SaveRocksOnBoulderRoute(newBoulderRoute);
                 }
             }
         }
@@ -221,22 +198,23 @@ namespace JustClimbTrial.Views.Pages
 
         private bool CanSetSelectedBoulderRockToStart(object parameter = null)
         {            
-            return selectedRockOnRoute != null;
+            return !rocksOnRouteViewModel.IsSelectedRockOnRouteNull();
         }
 
         private bool CanSetSelectedBoulderRockToIntermediate(object parameter = null)
         {            
-            return selectedRockOnRoute != null;
+            return !rocksOnRouteViewModel.IsSelectedRockOnRouteNull();
         }
 
         private bool CanSetSelectedBoulderRockToEnd(object parameter = null)
-        {            
-            return selectedRockOnRoute != null;
+        {
+            return !rocksOnRouteViewModel.IsSelectedRockOnRouteNull();
         }
 
         private bool CanRemoveSelectedBoulderRockFromRoute(object parameter = null)
         {            
-            return selectedRockOnRoute != null && IsRockOnTheRoute(selectedRockOnRoute.MyRock);
+            return !rocksOnRouteViewModel.IsSelectedRockOnRouteNull() &&
+                rocksOnRouteViewModel.IsRockOnTheRoute(rocksOnRouteViewModel.SelectedRockOnRoute.MyRockViewModel);
         }
 
         private void SetSelectedBoulderRockToStart(object parameter = null)
@@ -256,81 +234,12 @@ namespace JustClimbTrial.Views.Pages
 
         private void SetSelectedBoulderRockStatus(RockOnBoulderStatus status)
         {
-            if (selectedRockOnRoute != null)
-            {
-                // if selectedRockOnRoute not already in rocksOnRoute,
-                // add it into the rocksOnRoute list
-                if (!rocksOnRoute.Contains(selectedRockOnRoute))
-                {
-                    rocksOnRoute.Add(selectedRockOnRoute);
-                }
-
-                if (selectedRockOnRoute.ShapeOnCanvas == null || selectedRockOnRoute.BoulderStatus != status)
-                {
-                    RemoveRockShapeFromCanvas(selectedRockOnRoute);
-                    selectedRockOnRoute.BoulderStatus = status;
-                    selectedRockOnRoute.ShapeOnCanvas = DrawBoulderRockOnCanvas(selectedRockOnRoute);
-                }
-            }
+            rocksOnRouteViewModel.SetSelectedBoulderRockStatus(status);
         }
 
         private void RemoveSelectedBoulderRockFromRoute(object parameter = null)
         {
-            rocksOnRoute.Remove(selectedRockOnRoute);
-            RemoveRockShapeFromCanvas(selectedRockOnRoute);
-        }
-
-        #endregion
-
-
-        #region rock helpers
-
-        // by position
-        private Rock FindNearestRockOnWallFromTouchPoint(Point touchPt)
-        {
-            if (!rocksOnWall.Any())
-            {
-                return null;
-            }
-
-            foreach (Rock rock in rocksOnWall)
-            {
-                // TODO: change find nearest rock logic
-                double rockRadius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0)) * 0.5;
-                if ((rock.GetPoint() - touchPt).LengthSquared < rockRadius * rockRadius)
-                {
-                    return rock;
-                }
-            }
-
-            return null;
-        }
-
-        // by rock id
-        private bool IsRockOnTheRoute(Rock selectedRock)
-        {
-            return FindRockOnRouteViewModel(selectedRock) != null;
-        }        
-
-        // by rock id
-        private RockOnRouteViewModel FindRockOnRouteViewModel(Rock selectedRock)
-        {
-            if (!rocksOnRoute.Any())
-            {
-                return null;
-            }
-
-            IEnumerable<RockOnRouteViewModel> selectedRockOnRouteViewModels =
-                   rocksOnRoute.Where(x => x.MyRock.RockID == selectedRock.RockID);
-
-            if (selectedRockOnRouteViewModels.Any())
-            {
-                return selectedRockOnRouteViewModels.Single();
-            }
-            else
-            {
-                return null;
-            }
+            rocksOnRouteViewModel.RemoveSelectedRockFromRoute();
         }
 
         #endregion
@@ -361,172 +270,7 @@ namespace JustClimbTrial.Views.Pages
             return template.FindName("ucTrainingRockStatus", ctrlRockStatus) as TrainingRockStatus;
         }
 
-        #endregion
-
-
-        #region draw helpers        
-
-        private void DrawRocksOnWallOnCanvas(IEnumerable<Rock> rocks)
-        {
-            if (rocks.Any())
-            {
-                foreach (Rock rock in rocks)
-                {
-                    DrawRockOnWallOnCanvas(rock);
-                }
-            }
-        }
-
-        private Shape DrawRockOnWallOnCanvas(Rock rock)
-        {
-            // TODO: change draw ellipse logic
-            double radius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0));
-            Ellipse rockOnWallCircle = GetNewRockOnWallCircle(radius);
-            DrawCircleOnCanvas(rockOnWallCircle, rock.CoorX.GetValueOrDefault(0), rock.CoorY.GetValueOrDefault(0));
-            return rockOnWallCircle;
-        }
-
-        private Shape DrawBoulderRockOnCanvas(RockOnRouteViewModel rockOnBoulderRoute)
-        {
-            Shape shapeToReturn;
-            switch (rockOnBoulderRoute.BoulderStatus)
-            {
-                case RockOnBoulderStatus.Start:
-                    shapeToReturn = DrawStartRockOnCanvas(rockOnBoulderRoute.MyRock);
-                    break;
-                case RockOnBoulderStatus.End:
-                    shapeToReturn = DrawEndRockOnCanvas(rockOnBoulderRoute.MyRock);
-                    break;
-                case RockOnBoulderStatus.Int:
-                default:
-                    shapeToReturn = DrawIntermediateRockOnCanvas(rockOnBoulderRoute.MyRock);
-                    break;
-            }
-            return shapeToReturn;
-        }
-
-        private Shape DrawStartRockOnCanvas(Rock rock)
-        {
-            // TODO: change draw ellipse logic
-            double radius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0));
-            Ellipse startRockCircle = GetNewStartRockCircle(radius);
-            DrawCircleOnCanvas(startRockCircle, rock.CoorX.GetValueOrDefault(0), rock.CoorY.GetValueOrDefault(0));
-            return startRockCircle;
-        }
-
-        private Shape DrawIntermediateRockOnCanvas(Rock rock)
-        {
-            // TODO: change draw ellipse logic
-            double radius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0));
-            Ellipse intermediateRockCircle = GetNewIntermediateRockCircle(radius);
-            DrawCircleOnCanvas(intermediateRockCircle, rock.CoorX.GetValueOrDefault(0), rock.CoorY.GetValueOrDefault(0));
-            return intermediateRockCircle;
-        }
-
-        private Shape DrawEndRockOnCanvas(Rock rock)
-        {
-            // TODO: change draw ellipse logic
-            double radius = Math.Max(rock.Width.GetValueOrDefault(0), rock.Height.GetValueOrDefault(0));
-            Ellipse endRockCircle = GetNewEndRockCircle(radius);
-            DrawCircleOnCanvas(endRockCircle, rock.CoorX.GetValueOrDefault(0), rock.CoorY.GetValueOrDefault(0));
-            return endRockCircle;
-        }
-
-        private void DrawCircleOnCanvas(Ellipse circle, Point position)
-        {
-            DrawCircleOnCanvas(circle, position.X, position.Y);
-        }
-
-        private void DrawCircleOnCanvas(Ellipse circle, double x, double y)
-        {
-            double radius = circle.SemiMajorAxis(); 
-            
-            Canvas.SetLeft(circle, x - radius);
-            Canvas.SetTop(circle, y - radius);
-
-            canvasWall.Children.Add(circle);            
-        }
-
-        private void RemoveRockShapeFromCanvas(RockOnRouteViewModel rockOnRoute)
-        {
-            RemoveShapeFromCanvas(rockOnRoute.ShapeOnCanvas);
-        }
-
-        private void RemoveShapeFromCanvas(Shape aShape)
-        {
-            canvasWall.Children.Remove(aShape);
-        }
-
-        #endregion        
-
-
-        #region circles
-
-        private static Ellipse GetNewRockOnWallCircle(double radius)
-        {
-            SolidColorBrush mySolidColorBrush = new SolidColorBrush();
-            mySolidColorBrush.Color = Color.FromArgb(123, 255, 255, 0);
-            return new Ellipse
-            {
-                Fill = mySolidColorBrush,
-                StrokeThickness = 2,
-                Stroke = Brushes.Black,
-                Width = radius * 2,
-                Height = radius * 2
-            };
-        }
-
-        private static Ellipse GetNewStartRockCircle(double radius)
-        {
-            return new Ellipse
-            {
-                Fill = Brushes.Transparent,
-                StrokeThickness = 4,
-                Stroke = Brushes.Green,
-                Width = radius * 2,
-                Height = radius * 2
-            };
-        }
-
-        private static Ellipse GetNewIntermediateRockCircle(double radius)
-        {
-            return new Ellipse
-            {
-                Fill = Brushes.Transparent,
-                StrokeThickness = 4,
-                Stroke = Brushes.Yellow,
-                Width = radius * 2,
-                Height = radius * 2
-            };
-        }
-
-        private static Ellipse GetNewEndRockCircle(double radius)
-        {
-            return new Ellipse
-            {
-                Fill = Brushes.Transparent,
-                StrokeThickness = 4,
-                Stroke = Brushes.Red,
-                Width = radius * 2,
-                Height = radius * 2
-            };
-        }
-
-        private static Ellipse GetNewSelectedRockIndicatorCircle()
-        {
-            double radius = 2;
-            
-            return new Ellipse
-            {
-                Fill = Brushes.Red,
-                StrokeThickness = 0,
-                Stroke = Brushes.Red,
-                Width = radius * 2,
-                Height = radius * 2
-            };
-        }
-
-        #endregion
+        #endregion                
 
 
         #region retrieve data from UI helpers

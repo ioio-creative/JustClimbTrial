@@ -33,7 +33,7 @@ namespace JustClimbTrial.Kinect
                 return default(CameraSpacePoint);
             }
 
-            Tuple<float, float> dimensions = KinectExtensions.frameDimensions[spMode];
+            Tuple<float, float> dimensions = KinectExtensions.FrameDimensions[spMode];
             float x_temp = (float)(mousePt.X * dimensions.Item1 / wCanvas.ActualWidth);
             float y_temp = (float)(mousePt.Y * dimensions.Item2 / wCanvas.ActualHeight);
 
@@ -44,7 +44,7 @@ namespace JustClimbTrial.Kinect
                 return default(CameraSpacePoint);
             }
 
-            ushort depth = wallDepthData[(int)depPtFromMousePt.X + (int)(depPtFromMousePt.Y) * (int)KinectExtensions.frameDimensions[SpaceMode.Depth].Item1];
+            ushort depth = wallDepthData[(int)depPtFromMousePt.X + (int)(depPtFromMousePt.Y) * (int)KinectExtensions.FrameDimensions[SpaceMode.Depth].Item1];
             CameraSpacePoint camPtFromMousePt = wallMapper.MapDepthPointToCameraSpace(depPtFromMousePt, depth);
 
             return camPtFromMousePt;
@@ -65,7 +65,7 @@ namespace JustClimbTrial.Kinect
         //    DepthSpacePoint _boulderDSP = new DepthSpacePoint { X = float.NegativeInfinity, Y = float.NegativeInfinity };
         //    CameraSpacePoint _boulderCAMSP = new CameraSpacePoint();
 
-        //    Tuple<float, float> dimensions = KinectExtensions.frameDimensions[spMode];
+        //    Tuple<float, float> dimensions = KinectExtensions.FrameDimensions[spMode];
         //    float x_temp = (float)(mouseX * dimensions.Item1 / canvasWidth);
         //    float y_temp = (float)(mouseY * dimensions.Item2 / canvasHeight);
 
@@ -74,7 +74,7 @@ namespace JustClimbTrial.Kinect
         //    ushort depth = 0;
         //    if (_boulderDSP.X != float.NegativeInfinity && _boulderDSP.Y != float.NegativeInfinity)
         //    {
-        //        depth = wallDepthData[(int)_boulderDSP.X + (int)(_boulderDSP.Y) * (int)KinectExtensions.frameDimensions[SpaceMode.Depth].Item1];
+        //        depth = wallDepthData[(int)_boulderDSP.X + (int)(_boulderDSP.Y) * (int)KinectExtensions.FrameDimensions[SpaceMode.Depth].Item1];
         //        _boulderCAMSP = coMapper.MapDepthPointToCameraSpace(_boulderDSP, depth);
         //    }
         //    Console.WriteLine($"Position: Color[{(int)(x_temp + 0.5f)}][{(int)(y_temp + 0.5f)}] ==> Depth[{_boulderDSP.X}][{_boulderDSP.Y}]");
@@ -118,7 +118,7 @@ namespace JustClimbTrial.Kinect
             // Append text to an existing file named "WriteLines.txt".
             using (StreamWriter outputFile = new StreamWriter(wallMapPath + "\\Coordinate Map.txt", true))
             {
-                int colorWidth = (int)KinectExtensions.frameDimensions[SpaceMode.Color].Item1;
+                int colorWidth = (int)KinectExtensions.FrameDimensions[SpaceMode.Color].Item1;
                 int CPIndex = 0;
                 foreach (DepthSpacePoint dPoint in dCoordinatesInColorFrame)
                 {

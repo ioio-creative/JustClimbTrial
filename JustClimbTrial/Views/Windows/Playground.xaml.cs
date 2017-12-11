@@ -28,5 +28,10 @@ namespace JustClimbTrial.Views.Windows
         {
             playgroundCamera.Source = source;
         }
+
+        public void ShowMediaSource(Uri sourceUri)
+        {
+            playgroundPlayback.Source = sourceUri;
+        }
     }
 }

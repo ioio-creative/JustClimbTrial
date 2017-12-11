@@ -21,7 +21,8 @@ namespace JustClimbTrial.Views.Pages
     {
         #region constants
 
-        private const string RockOverlapsWarningMsg = "Please set a smaller rock size to avoid overlaps among rocks!";
+        private const string RockOverlapsWarningMsg = 
+            "Please set a smaller rock size to avoid overlaps among rocks!";
 
         #endregion
 
@@ -31,10 +32,8 @@ namespace JustClimbTrial.Views.Pages
         private SpaceMode _mode = SpaceMode.Color;
 
         // declare Kinect object and frame reader
-        private KinectSensor kinectSensor;
+        private KinectManager kinectManagerClient;
         private MultiSourceFrameReader mulSourceReader;
-
-        //CoordinateMapper coMapper;
 
         private float colorWidth, colorHeight, depthWidth, depthHeight;
 
@@ -83,32 +82,11 @@ namespace JustClimbTrial.Views.Pages
 
         public NewWall()
         {
-            // initialize Kinect object
-            kinectSensor = KinectSensor.GetDefault();
+           
 
-            // activate sensor
-            if (kinectSensor != null)
-            {
-                kinectSensor.Open();
-                Console.WriteLine("Kinect Activated");
 
-                mulSourceReader = kinectSensor.OpenMultiSourceFrameReader(FrameSourceTypes.Color | FrameSourceTypes.Depth | FrameSourceTypes.Infrared | FrameSourceTypes.Body);
-                mulSourceReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
-
-                colorWidth = KinectExtensions.frameDimensions[SpaceMode.Color].Item1;
-                colorHeight = KinectExtensions.frameDimensions[SpaceMode.Color].Item2;
-                depthWidth = KinectExtensions.frameDimensions[SpaceMode.Depth].Item1;
-                depthHeight = KinectExtensions.frameDimensions[SpaceMode.Depth].Item2;
-
-                colorMappedToDepthSpace = new DepthSpacePoint[(int)(colorWidth * colorHeight)];
-                lastNotNullDepthData = new ushort[(int)depthWidth * (int)depthHeight];
-                lastNotNullColorData = new byte[(int)colorWidth * (int)colorHeight * PixelFormats.Bgr32.BitsPerPixel / 8];
-
-                bitmap = new WriteableBitmap((int)depthWidth, (int)depthHeight, 96.0, 96.0, PixelFormats.Bgra32, null);
-
-                // Calculate the WriteableBitmap back buffer size
-                bitmapBackBufferSize = (uint)((bitmap.BackBufferStride * (bitmap.PixelHeight - 1)) + (bitmap.PixelWidth * bytesPerPixel));
-            }
+            
+                
 
             InitializeComponent();
 
@@ -193,9 +171,38 @@ namespace JustClimbTrial.Views.Pages
 
         public void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            kinectSensor.Open();
-            jcWall = new KinectWall(canvas, kinectSensor.CoordinateMapper);
-            rocksOnWallViewModel = new RocksOnWallViewModel(canvas);
+            kinectManagerClient = (this.Parent as MainWindow).KinectManagerClient;
+            if (kinectManagerClient.kinectSensor != null)
+            {
+                kinectManagerClient.multiSourceReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
+                //mulSourceReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
+
+                colorWidth = KinectExtensions.FrameDimensions[SpaceMode.Color].Item1;
+                colorHeight = KinectExtensions.FrameDimensions[SpaceMode.Color].Item2;
+                depthWidth = KinectExtensions.FrameDimensions[SpaceMode.Depth].Item1;
+                depthHeight = KinectExtensions.FrameDimensions[SpaceMode.Depth].Item2;
+
+                colorMappedToDepthSpace = new DepthSpacePoint[(int)(colorWidth * colorHeight)];
+                lastNotNullDepthData = new ushort[(int)depthWidth * (int)depthHeight];
+                lastNotNullColorData = new byte[(int)colorWidth * (int)colorHeight * PixelFormats.Bgr32.BitsPerPixel / 8];
+
+                bitmap = new WriteableBitmap((int)depthWidth, (int)depthHeight, 96.0, 96.0, PixelFormats.Bgra32, null);
+
+                // Calculate the WriteableBitmap back buffer size
+                bitmapBackBufferSize = (uint)((bitmap.BackBufferStride * (bitmap.PixelHeight - 1)) + (bitmap.PixelWidth * bytesPerPixel));
+            }
+            else
+            {
+                Console.WriteLine("Kinect not available!");
+            }
+
+            //kinectSensor.Open();
+            //jcWall = new KinectWall(canvas, kinectSensor.CoordinateMapper);
+            //rocksOnWallViewModel = new RocksOnWallViewModel(canvas, kinectSensor.CoordinateMapper);
+
+
+            jcWall = new KinectWall(canvas, kinectManagerClient.kinectSensor.CoordinateMapper);
+            rocksOnWallViewModel = new RocksOnWallViewModel(canvas, kinectManagerClient.kinectSensor.CoordinateMapper);
 
             InitialiseCommands();
         }
@@ -209,11 +216,6 @@ namespace JustClimbTrial.Views.Pages
                 mulSourceReader = null;
             }
 
-            if (kinectSensor != null)
-            {
-                kinectSensor.Close();
-                kinectSensor = null;
-            }
         }        
        
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -223,24 +225,22 @@ namespace JustClimbTrial.Views.Pages
                 Point mouseClickPt = e.GetPosition(cameraIMG);
                 //ColorSpacePoint _boulderCSP = new ColorSpacePoint { X = (float)mouseClickPt.X, Y = (float)mouseClickPt.Y };
 
-                Boulder rockCorrespondsToCanvasPt =
+                RockViewModel rockCorrespondsToCanvasPt =
                     rocksOnWallViewModel.GetRockInListByCanvasPoint(mouseClickPt);
 
                 if (rockCorrespondsToCanvasPt == null)  // new rock
                 {
-                    double newBoulderWidthOnCanvas = ConvertSliderValueToSizeOnCanvas(boulderWidthSlider.Value);
-                    double newBoulderHeightOnCanvas = ConvertSliderValueToSizeOnCanvas(boulderHeightSlider.Value);
-
+                    Size newBoulderSizeOnCanvas = GetNewBoulderSizeOnCanvasFromSliders();
+                    
                     // check rock overlaps
                     if (rocksOnWallViewModel.IsOverlapWithRocksOnWall(
-                            mouseClickPt, newBoulderWidthOnCanvas, newBoulderHeightOnCanvas)
+                            mouseClickPt, newBoulderSizeOnCanvas)
                         == false)
                     {
                         CameraSpacePoint csp = jcWall.GetCamSpacePointFromMousePoint(mouseClickPt, _mode);
                         if (!csp.Equals(default(CameraSpacePoint)))
                         {
-                            rocksOnWallViewModel.AddRock(csp, mouseClickPt, newBoulderWidthOnCanvas,
-                                newBoulderHeightOnCanvas);
+                            rocksOnWallViewModel.AddRock(csp, newBoulderSizeOnCanvas);
                         }
                         else
                         {
@@ -255,8 +255,8 @@ namespace JustClimbTrial.Views.Pages
                 else  // rock already in list
                 {
                     rocksOnWallViewModel.SelectedRock = rockCorrespondsToCanvasPt;
-                    boulderWidthSlider.Value = rockCorrespondsToCanvasPt.BCanvasWidth;
-                    boulderHeightSlider.Value = rockCorrespondsToCanvasPt.BCanvasHeight;
+                    boulderWidthSlider.Value = rockCorrespondsToCanvasPt.BoulderShape.Width;
+                    boulderHeightSlider.Value = rockCorrespondsToCanvasPt.BoulderShape.Height;
                 }
             }
             else
@@ -277,24 +277,22 @@ namespace JustClimbTrial.Views.Pages
 
             if (rocksOnWallViewModel != null && rocksOnWallViewModel.SelectedRock != null)
             {
-                double newBoulderWidthOnCanvas = ConvertSliderValueToSizeOnCanvas(boulderWidthSlider.Value);
-                double newBoulderHeightOnCanvas = ConvertSliderValueToSizeOnCanvas(boulderHeightSlider.Value);
+                Size newBoulderSizeOnCanvas = GetNewBoulderSizeOnCanvasFromSliders();
 
                 // check rock overlaps
                 if (rocksOnWallViewModel.IsOverlapWithRocksOnWallOtherThanSelectedRock(
-                        rocksOnWallViewModel.SelectedRock.BCanvasPoint,
-                        newBoulderWidthOnCanvas, newBoulderHeightOnCanvas)
+                        rocksOnWallViewModel.SelectedRock.BCanvasPoint, newBoulderSizeOnCanvas)
                     == false)
                 {
                     string boulderSizeSliderName = boulderSizeSlider.Name;
                     switch (boulderSizeSliderName)
                     {
                         case "boulderHeightSlider":
-                            rocksOnWallViewModel.ChangeHeightOfSelectedRock(newBoulderHeightOnCanvas);
+                            rocksOnWallViewModel.ChangeHeightOfSelectedRock(newBoulderSizeOnCanvas.Height);
                             break;
                         case "boulderWidthSlider":
                         default:
-                            rocksOnWallViewModel.ChangeWidthOfSelectedRock(newBoulderWidthOnCanvas);
+                            rocksOnWallViewModel.ChangeWidthOfSelectedRock(newBoulderSizeOnCanvas.Width);
                             break;
                     }
                 }
@@ -310,7 +308,7 @@ namespace JustClimbTrial.Views.Pages
 
         private void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
         {
-            var mSourceFrame = e.FrameReference.AcquireFrame();
+            var mSourceFrame = kinectManagerClient.multiSourceFrame;
             // If the Frame has expired by the time we process this event, return.
             if (mSourceFrame == null)
             {
@@ -326,8 +324,6 @@ namespace JustClimbTrial.Views.Pages
                 {
                     cameraIMG.Source = KinectExtensions.ToBitmap(colorFrame);
                     colorFrame.CopyConvertedFrameDataToArray(lastNotNullColorData, ColorImageFormat.Bgra);
-
-                    (Parent as MainWindow).PlaygroundWindow.ShowImage(cameraIMG.Source);
                 }
                 
                 try
@@ -338,7 +334,7 @@ namespace JustClimbTrial.Views.Pages
                         // Access the depth frame data directly via LockImageBuffer to avoid making a copy
                         using (KinectBuffer depthFrameData = depthFrame.LockImageBuffer())
                         {
-                            kinectSensor.CoordinateMapper.MapColorFrameToDepthSpaceUsingIntPtr(
+                            kinectManagerClient.kinectSensor.CoordinateMapper.MapColorFrameToDepthSpaceUsingIntPtr(
                                 depthFrameData.UnderlyingBuffer,
                                 depthFrameData.Size,
                                 colorMappedToDepthSpace);
@@ -375,6 +371,15 @@ namespace JustClimbTrial.Views.Pages
         {
             double multiplicationFactor = 1;
             return multiplicationFactor * sliderValue;
+        }
+
+        private Size GetNewBoulderSizeOnCanvasFromSliders()
+        {
+            return new Size
+            (
+                ConvertSliderValueToSizeOnCanvas(boulderWidthSlider.Value),
+                ConvertSliderValueToSizeOnCanvas(boulderHeightSlider.Value)
+            );
         }
 
         #endregion

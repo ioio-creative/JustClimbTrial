@@ -1,6 +1,7 @@
 ﻿using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -18,12 +19,12 @@ namespace JustClimbTrial.Kinect
     public static class KinectExtensions
     {
         //Frame Dimensions of different Frame Sources
-        public static Dictionary< SpaceMode, Tuple<float,float> > frameDimensions = new Dictionary< SpaceMode, Tuple<float, float>>
+        public static Dictionary<SpaceMode, Tuple<float, float>> FrameDimensions = new Dictionary<SpaceMode, Tuple<float, float>>
         {
             //Kinect V2.0 Color Space Dimension: 1920x1080 FullHD
-            { SpaceMode.Color, new Tuple<float,float>(1920f,1080f) },
+            { SpaceMode.Color, new Tuple<float,float>(1920f, 1080f) },
             //Depth bitmap dimension: 512×424
-            { SpaceMode.Depth, new Tuple<float,float>(512f,424f) }
+            { SpaceMode.Depth, new Tuple<float,float>(512f, 424f) }
         };
 
 
@@ -56,7 +57,10 @@ namespace JustClimbTrial.Kinect
             new Tuple<JointType, JointType>( JointType.AnkleRight, JointType.FootRight )
         };
 
+
         #region Body Draw
+
+        
         #region Skeleton with Body.Joint<CameraSpacePoints>
 
         public static void DrawSkeleton(this Canvas canvas, Body body)
@@ -72,33 +76,8 @@ namespace JustClimbTrial.Kinect
             {
                 canvas.DrawLine(body.Joints[standardJointLine.Item1], body.Joints[standardJointLine.Item2]);
             }
-
-            //canvas.DrawLine(body.Joints[JointType.Head], body.Joints[JointType.Neck]);
-            //canvas.DrawLine(body.Joints[JointType.Neck], body.Joints[JointType.SpineShoulder]);
-            //canvas.DrawLine(body.Joints[JointType.SpineShoulder], body.Joints[JointType.ShoulderLeft]);
-            //canvas.DrawLine(body.Joints[JointType.SpineShoulder], body.Joints[JointType.ShoulderRight]);
-            //canvas.DrawLine(body.Joints[JointType.SpineShoulder], body.Joints[JointType.SpineMid]);
-            //canvas.DrawLine(body.Joints[JointType.ShoulderLeft], body.Joints[JointType.ElbowLeft]);
-            //canvas.DrawLine(body.Joints[JointType.ShoulderRight], body.Joints[JointType.ElbowRight]);
-            //canvas.DrawLine(body.Joints[JointType.ElbowLeft], body.Joints[JointType.WristLeft]);
-            //canvas.DrawLine(body.Joints[JointType.ElbowRight], body.Joints[JointType.WristRight]);
-            //canvas.DrawLine(body.Joints[JointType.WristLeft], body.Joints[JointType.HandLeft]);
-            //canvas.DrawLine(body.Joints[JointType.WristRight], body.Joints[JointType.HandRight]);
-            //canvas.DrawLine(body.Joints[JointType.HandLeft], body.Joints[JointType.HandTipLeft]);
-            //canvas.DrawLine(body.Joints[JointType.HandRight], body.Joints[JointType.HandTipRight]);
-            //canvas.DrawLine(body.Joints[JointType.HandTipLeft], body.Joints[JointType.ThumbLeft]);
-            //canvas.DrawLine(body.Joints[JointType.HandTipRight], body.Joints[JointType.ThumbRight]);
-            //canvas.DrawLine(body.Joints[JointType.SpineMid], body.Joints[JointType.SpineBase]);
-            //canvas.DrawLine(body.Joints[JointType.SpineBase], body.Joints[JointType.HipLeft]);
-            //canvas.DrawLine(body.Joints[JointType.SpineBase], body.Joints[JointType.HipRight]);
-            //canvas.DrawLine(body.Joints[JointType.HipLeft], body.Joints[JointType.KneeLeft]);
-            //canvas.DrawLine(body.Joints[JointType.HipRight], body.Joints[JointType.KneeRight]);
-            //canvas.DrawLine(body.Joints[JointType.KneeLeft], body.Joints[JointType.AnkleLeft]);
-            //canvas.DrawLine(body.Joints[JointType.KneeRight], body.Joints[JointType.AnkleRight]);
-            //canvas.DrawLine(body.Joints[JointType.AnkleLeft], body.Joints[JointType.FootLeft]);
-            //canvas.DrawLine(body.Joints[JointType.AnkleRight], body.Joints[JointType.FootRight]);
-
         }
+
         public static void DrawPoint(this Canvas canvas, Joint joint)
         {
             // 1) Check whether the joint is tracked.
@@ -127,6 +106,7 @@ namespace JustClimbTrial.Kinect
             // 5) Add the ellipse to the canvas.
             canvas.Children.Add(ellipse);
         }
+
         public static void DrawLine(this Canvas canvas, Joint first, Joint second)
         {
             if (first.TrackingState == TrackingState.NotTracked || second.TrackingState == TrackingState.NotTracked) return;
@@ -158,10 +138,12 @@ namespace JustClimbTrial.Kinect
 
             return joint;
         }
+
         public static Joint ScaleTo(this Joint joint, double width, double height)
         {
             return ScaleTo(joint, width, height, 1.0f, 1.0f);
         }
+
         private static float Scale(double maxPixel, double maxSkeleton, float position)
         {
             float value = (float)((((maxPixel / maxSkeleton) / 2) * position) + (maxPixel / 2));
@@ -178,7 +160,6 @@ namespace JustClimbTrial.Kinect
 
             return value;
         }
-
 
         #endregion
 
@@ -228,7 +209,7 @@ namespace JustClimbTrial.Kinect
             {
                 //Console.WriteLine($"Joint Mapping Error: Joint[{joint.JointType.ToString()}] ( {spPt.X} , {spPt.Y} )");
             }
-            else if ((spPt.X < 0 || spPt.Y < 0 || spPt.X > frameDimensions[mode].Item1 || spPt.Y > frameDimensions[mode].Item2))
+            else if ((spPt.X < 0 || spPt.Y < 0 || spPt.X > FrameDimensions[mode].Item1 || spPt.Y > FrameDimensions[mode].Item2))
             {
                 //Console.WriteLine($"Joint Mapping Overflow: Joint[{joint.JointType.ToString()}] ( {spPt.X} , {spPt.Y} )");
             } 
@@ -249,6 +230,7 @@ namespace JustClimbTrial.Kinect
             
 
         }
+
         public static void DrawLine(this Canvas canvas, Joint first, Joint second, CoordinateMapper mapper, SpaceMode mode)
         {
             if (first.TrackingState == TrackingState.NotTracked || second.TrackingState == TrackingState.NotTracked) return;
@@ -288,9 +270,9 @@ namespace JustClimbTrial.Kinect
         
         }
 
-
         #endregion
 
+        
         #endregion
 
         #region Image Functions
@@ -503,6 +485,19 @@ namespace JustClimbTrial.Kinect
         //    }            
         //    return reflection;
         //}
+
+        #endregion
+
+
+        #region CoordinateMapper
+
+        public static Point MapCameraSpacePointToPointOnCanvas(this CoordinateMapper coorMap, CameraSpacePoint camSP, Canvas canvas, SpaceMode spaceMode)
+        {
+            ColorSpacePoint colorSP = coorMap.MapCameraPointToColorSpace(camSP);
+            double normedColorSPX = colorSP.X / FrameDimensions[spaceMode].Item1;
+            double normedColorSPY = colorSP.Y / FrameDimensions[spaceMode].Item2;
+            return new Point(normedColorSPX * canvas.Width, normedColorSPY * canvas.Height);
+        }        
 
         #endregion
     }
