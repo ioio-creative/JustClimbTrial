@@ -6,5 +6,11 @@
         xmlns:local="clr-namespace:JustClimbTrial"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280" 
+<<<<<<< HEAD
         Source="/Views/Pages/NewWall.xaml">
+=======
+        Source="/Views/Pages/NewWall.xaml"
+        Loaded="NavigationWindow_Loaded"
+        Closed="NavigationWindow_Closed">
+>>>>>>> parent of 5182c16... [171211]Video Player UI
 </NavigationWindow>

@@ -35,6 +35,18 @@ namespace JustClimbTrial
             playgroundWindow = new Playground();
             playgroundWindow.Show();
 
+<<<<<<< HEAD
+=======
+        private void NavigationWindow_Closed(object sender, EventArgs e)
+        {
+            KinectManagerClient.ColorImageSourceArrived -= HandleColorImageSourceArrived;
+            KinectManagerClient.CloseKinect();
+        }
+
+        public void HandleColorImageSourceArrived(object sender, ColorImgSrcEventArgs e)
+        {
+            playgroundWindow.ShowImage( e.GetColorImgSrc() );
+>>>>>>> parent of 5182c16... [171211]Video Player UI
         }
     }
 }
