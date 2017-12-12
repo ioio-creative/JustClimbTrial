@@ -5,10 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JustClimbTrial.Views.Dialogs"
         mc:Ignorable="d"
-        Title="Just Climb - Video Playback" Height="100" Width="300"
+        Title="Just Climb - Video Playback" Height="200" Width="400"
         MinHeight="100" MinWidth="300"
-        ResizeMode="CanResizeWithGrip"
+        ResizeMode="CanResize"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"
         Source="/Views/Pages/VideoPlaybackDialogConfirm.xaml">
+
+    
 </NavigationWindow>
