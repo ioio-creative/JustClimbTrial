@@ -1,6 +1,10 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿#pragma checksum "..\..\MainWindow.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "E48B17BFAE08D20F084A7D1E740FCB78F8EE5B09"
+=======
+﻿#pragma checksum "..\..\MainWindow.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "3CF65944C6584C7C18CDF49927682AC61D4716C1"
+>>>>>>> parent of 5182c16... [171211]Video Player UI
 =======
 ﻿#pragma checksum "..\..\MainWindow.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "3CF65944C6584C7C18CDF49927682AC61D4716C1"
 >>>>>>> parent of 5182c16... [171211]Video Player UI

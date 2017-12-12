@@ -178,6 +178,9 @@ C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimb
 C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.pdb
 C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\obj\Debug\JustClimbTrial.csprojResolveAssemblyReference.cache
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 5182c16... [171211]Video Player UI
+=======
 >>>>>>> parent of 5182c16... [171211]Video Player UI
 =======
 >>>>>>> parent of 5182c16... [171211]Video Player UI
