@@ -1,9 +1,5 @@
-﻿using JustClimbTrial.Kinect;
-using Microsoft.Kinect;
-using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace JustClimbTrial.Views.Pages
 {
@@ -12,11 +8,8 @@ namespace JustClimbTrial.Views.Pages
     /// </summary>
     public partial class JustClimbHome : Page
     {
-       
-
         public JustClimbHome()
         {
-
             InitializeComponent();
         }
 
@@ -24,10 +17,6 @@ namespace JustClimbTrial.Views.Pages
         {
             ModeSelect modeSelectPage = new ModeSelect();
             this.NavigationService.Navigate(modeSelectPage);
-
-            (this.Parent as MainWindow).KinectManagerClient.ColorImageSourceArrived -= (this.Parent as MainWindow).HandleColorImageSourceArrived;
         }
-
-
     }
 }

@@ -1,5 +1,4 @@
-﻿using JustClimbTrial.Kinect;
-using JustClimbTrial.Views.Windows;
+﻿using JustClimbTrial.Views.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.Kinect;
 
 namespace JustClimbTrial
 {
@@ -24,12 +22,11 @@ namespace JustClimbTrial
     public partial class MainWindow : NavigationWindow
     {
         private Playground playgroundWindow;
+
         public Playground PlaygroundWindow
         {
             get { return playgroundWindow; }            
         }
-
-        public KinectManager KinectManagerClient;
 
         public MainWindow()
         {
@@ -37,26 +34,7 @@ namespace JustClimbTrial
 
             playgroundWindow = new Playground();
             playgroundWindow.Show();
-        }
 
-        private void NavigationWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            KinectManagerClient = new KinectManager();
-            //activate sensor in Main Window only once
-            KinectManagerClient.OpenKinect();
-            KinectManagerClient.ColorImageSourceArrived += HandleColorImageSourceArrived;
-        }
-
-        private void NavigationWindow_Closed(object sender, EventArgs e)
-        {
-            KinectManagerClient.ColorImageSourceArrived -= HandleColorImageSourceArrived;
-            playgroundWindow.Close();
-            KinectManagerClient.CloseKinect();
-        }
-
-        public void HandleColorImageSourceArrived(object sender, ColorImgSrcEventArgs e)
-        {
-            playgroundWindow.ShowImage( e.GetColorImgSrc() );
         }
     }
 }
