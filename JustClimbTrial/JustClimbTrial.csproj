@@ -145,6 +145,9 @@
     <Compile Include="Views\Pages\RouteSet.xaml.cs">
       <DependentUpon>RouteSet.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Pages\VideoPlayback.xaml.cs">
+      <DependentUpon>VideoPlayback.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pages\VideoPlaybackDialogConfirm.xaml.cs">
       <DependentUpon>VideoPlaybackDialogConfirm.xaml</DependentUpon>
     </Compile>
@@ -201,6 +204,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\RouteSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\VideoPlayback.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
