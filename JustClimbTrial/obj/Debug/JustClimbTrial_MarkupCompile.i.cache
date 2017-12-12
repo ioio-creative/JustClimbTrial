@@ -19,6 +19,9 @@ C:\Users\User\Documents\GitHub\JustClimbTrial\JustClimbTrial\App.xaml
 141706944450
 
 67-1710713357
+<<<<<<< HEAD
+>>>>>>> parent of 5182c16... [171211]Video Player UI
+=======
 >>>>>>> parent of 5182c16... [171211]Video Player UI
 161685736905
 MainWindow.xaml;Views\Dialogs\RouteSetModeSelectDialog.xaml;Views\Dialogs\VideoPlaybackDialog.xaml;Views\Pages\NewWall.xaml;Views\Pages\Routes.xaml;Views\Pages\GameStart.xaml;Views\Pages\JustClimbHome.xaml;Views\Pages\ModeSelect.xaml;Views\Pages\RouteSet.xaml;Views\Pages\VideoPlaybackDialogConfirm.xaml;Views\UserControls\BoulderRockStatus.xaml;Views\UserControls\HeaderRowNavigation.xaml;Views\UserControls\TrainingRockStatus.xaml;Views\Windows\Playground.xaml;

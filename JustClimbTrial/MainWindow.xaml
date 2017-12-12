@@ -7,8 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280" 
 <<<<<<< HEAD
+<<<<<<< HEAD
         Source="/Views/Pages/NewWall.xaml">
 =======
+=======
+>>>>>>> parent of 5182c16... [171211]Video Player UI
         Source="/Views/Pages/NewWall.xaml"
         Loaded="NavigationWindow_Loaded"
         Closed="NavigationWindow_Closed">
